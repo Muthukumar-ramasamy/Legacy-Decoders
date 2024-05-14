@@ -8,12 +8,12 @@ export const AppRoutes: FC = () => {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Landing />}>
-                    <Route path="/home/*" element={<Home />} />
+                    <Route path="/*" element={<Home />} />
                     <Route
                         path={"/"}
                         element={
                             <Navigate
-                                to={"/home/story-to-syntex"}
+                                to={"/story-to-syntex"}
                                 replace
                             />
                         }

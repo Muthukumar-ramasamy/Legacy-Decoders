@@ -1,81 +1,162 @@
-import { FC, FormEvent, useState } from "react";
+import React, { FC, FormEvent, useState } from "react";
 import { Box } from "@mui/system";
-import { Button, Card, CardContent, Divider, TextField, Typography } from "@mui/material";
+import { Button, Card, CardContent, Divider, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { Filebox } from "./Filebox";
 import storyToCode from "../service/codeGenerator";
-import Markdown from 'react-markdown'
-
-
+import FileProcessingCard from "./fileProgress";
+import { useNavigate } from "react-router-dom";
+import ProjectStructure from "./projectStructure";
 
 export const StoryToSnippet: FC = () => {
-    const [description, setDescription] = useState<string>("");
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const navigate = useNavigate()
+    const [techStack, setTechStack] = useState<string>("");
+    const [selectedBrdFile, setSelectedBrdFile] = useState<File | null>(null);
+    const [selectedBrdVal, setSelectedBrdVal] = useState("0")
+    const [brdTxt, setBrdTxt] = useState("")
+    const [userStory, setUserStory] = useState("")
+    const [projectId, setProjectId] = useState(null)
+    const [structure, setStructure] = useState({ content: '', s3_url: '', project_id: null })
+    const [showStructure, setShowStructure] = useState(false)
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        console.log('Zip file uploaded:', selectedFile.name, description);
-        e.preventDefault();
-        if (selectedFile && selectedFile.type === 'application/x-zip-compressed') {
-            console.log('Zip file uploaded:', selectedFile.name);
-            console.log('Description:', description);
-            storyToCode.generateZip({ selectedFile, description })
+
+    const generateBrdContent = async () => {
+        const payload = {
+            story: userStory,
+            tech: techStack,
+            user_name: "admin",
+        }
+        const res = await storyToCode.generateBrd(payload)
+        console.log(res, "...ress")
+        if (res.content) {
+            setBrdTxt(res.content)
+            setProjectId(res.project_id)
+        }
+    }
+
+    const generateStructure = async (e: FormEvent) => {
+        e.preventDefault()
+        if (projectId) {
+            const res = await storyToCode.getStructureByProjectId(projectId)
+            if (res) {
+                setShowStructure(true)
+                setStructure({ content: res.content || null, s3_url: res?.s3_url, project_id: res.project_id })
+            }
+        }
+        else if (selectedBrdFile && selectedBrdFile.type === 'application/x-zip-compressed') {
+            const brd_file = new FormData();
+            brd_file.append('brd_file', selectedBrdFile)
+            const payload = {
+                story: userStory,
+                tech: techStack,
+                user_name: "admin",
+                brdFile: brd_file
+            }
+            const res = await storyToCode.generateProjectStructure(payload)
+            console.log(res, "...ress")
+            if (res) {
+                setShowStructure(true)
+                setStructure({ content: res.content || null, s3_url: res?.s3_url, project_id: res.project_id })
+            }
         } else {
             console.log('Please upload a zip file.');
         }
     }
 
-    const markd ="### 1. Project Structure    "
+    console.log(selectedBrdFile, "iiii")
 
     return (
-        <Box sx={{ display: "flex", alignItems: "center", px: 4, justifyContent: "center", flexDirection: 'column' }}>
-            <Card sx={{ minWidth: 432, borderRadius: "10px" }}>
-                <CardContent>
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            id="userstory"
-                            label="Enter/Paste User Story Here"
-                            placeholder="Enter/Paste User Story Here"
-                            multiline
-                            minRows={10}
-                            sx={{ minWidth: "370px", minHeight: "270px" }}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                        <Box sx={{ position: 'relative', mt: 4 }}>
-                            <Divider />
-                            <Typography
-                                sx={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '50%',
-                                    transform: 'translate(-50%, -50%)',
-                                    bgcolor: 'white',
-                                    px: 1,
-                                    fontSize: "13px",
-                                    fontWeight: "600"
-                                }}
-                            >
-                                OR
-                            </Typography>
-                        </Box>
-                        <Box component={"div"} my={3} sx={{ display: "flex", flexDirection: "column" }}>
-                            <Typography
-                                component={"div"}
-                                display={"flex"}
-                                justifySelf={"center"}
-                                sx={{ mb: 2 }}>
-                                {"Upload User Story"}
-                            </Typography>
-                            <Filebox
-                                isStoryToSyntex={true}
-                                onChange={(file: File | null) => {
-                                    console.log(file, "...selected file")
-                                    setSelectedFile(file)
-                                }} />
-                        </Box>
-                        <Button type="submit" variant="contained" fullWidth>Generate Code</Button>
-                    </form >
-                </CardContent>
-            </Card>
-            <Markdown>{markd}</Markdown>
-        </Box >
+        <>
+            <Box sx={{ display: "flex", alignItems: "center", px: 4, justifyContent: "center", flexDirection: 'column' }}>
+                <Card sx={{ minWidth: 520, borderRadius: "10px" }}>
+                    <CardContent>
+                        <form onSubmit={(e) => generateStructure(e)}>
+                            <Box sx={{ display: "flex", flexDirection: "column" }}>
+                                <Typography sx={{ display: "flex", justifyContent: "flex-start", p: 1 }}>{"User Story"}</Typography>
+                                <TextField
+                                    id="userstory"
+                                    label="Enter/Paste User Story Here"
+                                    placeholder="Enter/Paste User Story Here"
+                                    multiline
+                                    required
+                                    minRows={3}
+                                    value={userStory}
+                                    sx={{ minWidth: "370px", minHeight: "100px" }}
+                                    onChange={(e) => setUserStory(e.target.value)}
+                                />
+                                <Typography sx={{ display: "flex", justifyContent: "flex-start", p: 1, pt: 2 }}>{"Tech stack"}</Typography>
+                                <TextField
+                                    id="TechStack"
+                                    label="Enter Tech Stack Here"
+                                    placeholder="Enter Tech Stack Here"
+                                    multiline
+                                    required
+                                    value={techStack}
+                                    minRows={1}
+                                    sx={{ minWidth: "370px", minHeight: "50px" }}
+                                    onChange={(e) => setTechStack(e.target.value)}
+                                />
+                            </Box>
+                            <Box display={"flex"} flexDirection={"column"} justifyContent={"flex-start"} paddingTop={2}>
+                                <RadioGroup
+                                    onChange={(e) => setSelectedBrdVal(e.target.value)}
+                                    aria-labelledby="demo-form-control-label-placement"
+                                    value={selectedBrdVal}
+                                    name="position">
+                                    <FormControlLabel value="0" control={<Radio />} label="I have Business Requirements Document (BRD) file" />
+                                    <FormControlLabel value="1" control={<Radio />} label="I don't have Business Requirements Document (BRD) file" />
+                                </RadioGroup>
+                            </Box>
+                            {selectedBrdVal && selectedBrdVal === "0" ?
+                                <Box component={"div"} my={3} sx={{ display: "flex", flexDirection: "column", justifyContent:"center" }}>
+                                    {selectedBrdFile && selectedBrdFile.name ?
+                                        <FileProcessingCard
+                                            fileName={selectedBrdFile.name}
+                                            fileSize={selectedBrdFile.size}
+                                            progressstatus={"complete"}
+                                            onRemove={() => { setSelectedBrdFile(null) }}
+                                        />
+                                        :
+                                        <>
+                                            <Typography
+                                                component={"div"}
+                                                display={"flex"}
+                                                justifySelf={"center"}
+                                            >
+                                                {"Upload BRD file as '.txt' file"}
+                                            </Typography>
+                                            <Filebox
+                                                isStoryToSyntex={true}
+                                                onChange={(file: File | null) => {
+                                                    console.log(file, "...selected file");
+                                                    setSelectedBrdFile(file);
+                                                }} isFormSubmitted={false} />
+                                        </>}
+
+                                </Box>
+                                :
+                                <Box sx={{ py: 2, display: "flex", flexDirection: "column" }}>
+                                    {brdTxt ? <TextField
+                                        id="BRD"
+                                        label="Business Requirements Document (BRD)"
+                                        placeholder="Enter BRD Here"
+                                        multiline
+                                        value={brdTxt}
+                                        disabled
+                                        minRows={5}
+                                        sx={{ minWidth: "370px", minHeight: "150px" }}
+                                        onChange={(e) => setBrdTxt(e.target.value)}
+                                    /> : <Button variant="outlined" sx={{ width: "fit-content", mb: 2 }} onClick={() => generateBrdContent()}>Generate BRD</Button>}
+
+                                </Box>}
+                            <Button type="submit" variant="contained" disabled={!projectId && !selectedBrdFile}>Generate Project Structure</Button>
+                        </form >
+                    </CardContent>
+                </Card>
+            </Box >
+            {<ProjectStructure structure={structure} showStructure={showStructure} setShowStructure={setShowStructure} />}
+        </>
+
     )
 }
+
+export default StoryToSnippet;

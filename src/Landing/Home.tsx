@@ -14,9 +14,9 @@ export const Home: FC = () => {
     const handleChange = (newValue: string) => {
         setTabVal(newValue);
         if (newValue === "Code to Story") {
-            navigate("/home/magic-decoder");
+            navigate("/magic-decoder");
         } else {
-            navigate("/home/story-to-syntex");
+            navigate("/story-to-syntex");
         }
     }
 

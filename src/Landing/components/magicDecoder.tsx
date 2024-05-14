@@ -30,9 +30,9 @@ export const MagicDecoder: FC = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <Filebox onChange={(file: File | null) => {
-                            console.log(file, "filee")
-                            setSelectedFile(file)
-                        }} />
+                            console.log(file, "filee");
+                            setSelectedFile(file);
+                        } } isFormSubmitted={false} />
                         <Box sx={{ position: 'relative', mt: 4 }}>
                             <Divider />
                             <Typography

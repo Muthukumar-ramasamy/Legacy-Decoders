@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material"
 import { ChangeEvent, FC, useRef, useState } from "react"
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 
-export const Filebox: FC<{ onChange: (file: File) => void, isStoryToSyntex?: Boolean }> = ({ onChange, isStoryToSyntex }) => {
+export const Filebox: FC<{ onChange: (file: File) => void, isFormSubmitted: boolean, isStoryToSyntex?: Boolean }> = ({ onChange, isStoryToSyntex }) => {
     const [dragActive, setDragActive] = useState<boolean>(false)
     const [isError, setIsError] = useState<boolean>(false)
     const [invalidFile, setInvalidFile] = useState<boolean>(false)
@@ -90,6 +90,7 @@ export const Filebox: FC<{ onChange: (file: File) => void, isStoryToSyntex?: Boo
             // // handleFile(files);
             // e.target.value = null;
             // inputRef.current.value = null;
+            setSelectedFile(files)
             onChange(files[0])
         }
     }
@@ -143,7 +144,7 @@ export const Filebox: FC<{ onChange: (file: File) => void, isStoryToSyntex?: Boo
                 onChange={handleChange}
             />
 
-            <Box
+           <Box
                 component={"div"}
                 sx={[
                     {
@@ -190,7 +191,7 @@ export const Filebox: FC<{ onChange: (file: File) => void, isStoryToSyntex?: Boo
                     <Box sx={{ width: "100%", textAlign: "center", height: "20px" }}>
                         {isError && invalidFile && (
                             <Typography variant={"body2"} color={"error.main"}>
-                                {"messages.invalidfileFormat"}
+                                {"Please upload a valid zip file"}
                             </Typography>
                         )}
                     </Box>

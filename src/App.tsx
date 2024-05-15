@@ -3,10 +3,12 @@ import logo from './logo.svg';
 import './App.css';
 import { Home } from './Landing/Home';
 import { AppRoutes } from './AppRoute';
+import { CssBaseline } from '@mui/material';
 
 function App() {
   return (
     <div className="App">
+      <CssBaseline />
       {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>

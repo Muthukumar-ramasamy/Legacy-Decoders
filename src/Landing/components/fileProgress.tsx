@@ -1,5 +1,7 @@
 import { FC, useMemo } from "react";
-import { Error, Image, FolderZip, Delete } from "@mui/icons-material";
+import { Error, Image, FolderZip } from "@mui/icons-material";
+import zip from "../../assets/zip_file.svg";
+import deleteIcon from "../../assets/delete.svg";
 
 import {
   Box,
@@ -54,16 +56,7 @@ const FileProcessingCard: FC<FileProcessingProps> = ({
   );
   const statusBasedIcon = useMemo(() => {
     if (progressstatus === "complete") {
-      return (
-        <FolderZip
-          fontSize={"large"}
-          sx={{
-            display: "flex",
-            alignSelf: "center",
-            color: "rgba(0, 0, 0, 0.56)",
-          }}
-        />
-      );
+      return <img src={zip} alt="" />;
     }
     if (progressstatus === "failed") {
       return (
@@ -90,8 +83,17 @@ const FileProcessingCard: FC<FileProcessingProps> = ({
   }, [progressstatus]);
 
   return (
-    <>
-      <Card elevation={1} sx={{ width: "80%", ml: 3 }}>
+    <Box
+      sx={{
+        height: "11rem",
+        alignItems: "center",
+        display: "flex",
+        justifyContent: "center",
+        border: "dashed 1px #7e7d7d75",
+        borderRadius: "4px ",
+      }}
+    >
+      <Card elevation={1}>
         <CardContent sx={{ paddingBottom: "16px !important" }}>
           <Grid container spacing={2}>
             <Grid
@@ -161,20 +163,13 @@ const FileProcessingCard: FC<FileProcessingProps> = ({
                 sx={{ "&:hover": { backgroundColor: "transparent" } }}
                 onClick={() => onRemove()}
               >
-                <Delete
-                  fontSize={"medium"}
-                  sx={{
-                    display: "flex",
-                    alignSelf: "center",
-                    color: "rgba(0, 0, 0, 0.56)",
-                  }}
-                />
+                <img src={deleteIcon} alt=""></img>
               </IconButton>
             </Grid>
           </Grid>
         </CardContent>
       </Card>
-    </>
+    </Box>
   );
 };
 

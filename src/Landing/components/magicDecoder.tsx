@@ -32,21 +32,21 @@ export const MagicDecoder: FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (selectedFile && selectedFile.type === "application/x-zip-compressed") {;
-      const legacy_code = new FormData();
-      legacy_code.append('legacy_code', selectedFile)
-      const payload = {
-        userName: "Dbabu",
-        legacyTech: legacyTech ? legacyTech : null,
-        legacy_code: legacy_code
-      }
-      setLoading(true);
-      const res = await generateStory(payload) as any;
-      if (res) {
-        setLoading(false);
-        setGenerateStoryResponse(res?.data);
-        setIsStory(true);
-      }
+    console.log("sadsad", selectedFile);
+
+    const legacy_code = new FormData();
+    legacy_code.append("legacy_code", selectedFile);
+    const payload = {
+      userName: "dbabu",
+      legacyTech: legacyTech ? legacyTech : null,
+      legacy_code: legacy_code,
+    };
+    setLoading(true);
+    const res = (await generateStory(payload)) as any;
+    if (res) {
+      setLoading(false);
+      setGenerateStoryResponse(res?.data);
+      setIsStory(true);
     }
   };
 
@@ -57,14 +57,19 @@ export const MagicDecoder: FC = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          p: 4,
           justifyContent: "center",
         }}
       >
-        <Card sx={{ minWidth: 432, borderRadius: "10px" }}>
+        <Card
+          sx={{
+            minWidth: "32rem",
+            minHeight: "34rem",
+            borderRadius: "10px",
+            mt: "5rem",
+          }}
+        >
           <CardContent>
             <form onSubmit={handleSubmit}>
-           
               {selectedFile ? (
                 <FileProcessingCard
                   fileName={selectedFile.name}
@@ -134,28 +139,24 @@ export const MagicDecoder: FC = () => {
                 my={3}
                 sx={{ display: "flex", flexDirection: "column" }}
               >
-                <Stack
-                direction="row"
-                justifyContent=""
-                spacing={1}
-              >
-                <Typography
-                  component={"div"}
-                  display={"flex"}
-                  justifySelf={"center"}
-                  sx={{ mb: 2 }}
-                >
-                  {"Legacy Tech"}
-                </Typography>
-                <Typography
-                  component={"div"}
-                  display={"flex"}
-                  justifySelf={"center"}
-                  sx={{ mb: 2 }}
-                >
-                  {"(Optional)"}
-                </Typography>
-              </Stack>
+                <Stack direction="row" justifyContent="" spacing={1}>
+                  <Typography
+                    component={"div"}
+                    display={"flex"}
+                    justifySelf={"center"}
+                    sx={{ mb: 2 }}
+                  >
+                    {"Legacy Tech"}
+                  </Typography>
+                  <Typography
+                    component={"div"}
+                    display={"flex"}
+                    justifySelf={"center"}
+                    sx={{ mb: 2 }}
+                  >
+                    {"(Optional)"}
+                  </Typography>
+                </Stack>
                 <TextField
                   inputProps={{
                     startadornment: (
@@ -175,17 +176,16 @@ export const MagicDecoder: FC = () => {
               <Button type="submit" variant="contained" fullWidth>
                 Generate User Story
               </Button>
-            </form> 
+            </form>
           </CardContent>
         </Card>
         <div></div>
-
       </Box>
       {isStory && !loading && (
         <>
           <GeneratedStory
             generateStoryResponse={generateStoryResponse}
-            onClose={()=>{
+            onClose={() => {
               setIsStory(false);
               setDescription("");
               setLegacyTech("");

@@ -1,6 +1,17 @@
 import React, { FC, FormEvent, useState } from "react";
 import { Box } from "@mui/system";
-import { Button, Card, CardContent, Divider, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Filebox } from "./Filebox";
 import storyToCode from "../service/codeGenerator";
 import FileProcessingCard from "./fileProgress";
@@ -9,61 +20,75 @@ import ProjectStructure from "./projectStructure";
 import { UploadPopUp } from "./UploadPopUp";
 
 export const StoryToSnippet: FC = () => {
-    const navigate = useNavigate()
-    const [techStack, setTechStack] = useState<string>("");
-    const [selectedBrdFile, setSelectedBrdFile] = useState<File | null>(null);
-    const [selectedBrdVal, setSelectedBrdVal] = useState("0")
-    const [brdTxt, setBrdTxt] = useState("")
-    const [userStory, setUserStory] = useState("")
-    const [projectId, setProjectId] = useState(null)
-    const [structure, setStructure] = useState({ content: '', s3_url: '', project_id: null })
-    const [showStructure, setShowStructure] = useState(false)
-    const [fileUpload, setFileUpload] = useState(false);
+  const navigate = useNavigate();
+  const [techStack, setTechStack] = useState<string>("");
+  const [selectedBrdFile, setSelectedBrdFile] = useState<File | null>(null);
+  const [selectedBrdVal, setSelectedBrdVal] = useState("");
+  const [brdTxt, setBrdTxt] = useState("");
+  const [userStory, setUserStory] = useState("");
+  const [projectId, setProjectId] = useState(null);
+  const [structure, setStructure] = useState({
+    content: "",
+    s3_url: "",
+    project_id: null,
+  });
+  const [showStructure, setShowStructure] = useState(false);
+  const [fileUpload, setFileUpload] = useState(false);
 
-    const generateBrdContent = async () => {
-        const payload = {
-            story: userStory,
-            tech: techStack,
-            user_name: "admin",
-        }
-        const res = await storyToCode.generateBrd(payload)
-        console.log(res, "...ress")
-        if (res.content) {
-            setBrdTxt(res.content)
-            setProjectId(res.project_id)
-        }
+  const generateBrdContent = async () => {
+    const payload = {
+      story: userStory,
+      tech: techStack,
+      user_name: "admin",
+    };
+    const res = await storyToCode.generateBrd(payload);
+    console.log(res, "...ress");
+    if (res.content) {
+      setBrdTxt(res.content);
+      setProjectId(res.project_id);
     }
+  };
 
-    const generateStructure = async (e: FormEvent) => {
-        e.preventDefault()
-        if (projectId) {
-            const res = await storyToCode.getStructureByProjectId(projectId)
-            if (res) {
-                setShowStructure(true)
-                setStructure({ content: res.content || null, s3_url: res?.s3_url, project_id: res.project_id })
-            }
-        }
-        else if (selectedBrdFile && selectedBrdFile.type === 'application/x-zip-compressed') {
-            const brd_file = new FormData();
-            brd_file.append('brd_file', selectedBrdFile)
-            const payload = {
-                story: userStory,
-                tech: techStack,
-                user_name: "admin",
-                brdFile: brd_file
-            }
-            const res = await storyToCode.generateProjectStructure(payload)
-            console.log(res, "...ress")
-            if (res) {
-                setShowStructure(true)
-                setStructure({ content: res.content || null, s3_url: res?.s3_url, project_id: res.project_id })
-            }
-        } else {
-            console.log('Please upload a zip file.');
-        }
+  const generateStructure = async (e: FormEvent) => {
+    e.preventDefault();
+    if (projectId) {
+      const res = await storyToCode.getStructureByProjectId(projectId);
+      if (res) {
+        setShowStructure(true);
+        setStructure({
+          content: res.content || null,
+          s3_url: res?.s3_url,
+          project_id: res.project_id,
+        });
+      }
+    } else if (
+      selectedBrdFile &&
+      selectedBrdFile.type === "application/x-zip-compressed"
+    ) {
+      const brd_file = new FormData();
+      brd_file.append("brd_file", selectedBrdFile);
+      const payload = {
+        story: userStory,
+        tech: techStack,
+        user_name: "admin",
+        brdFile: brd_file,
+      };
+      const res = await storyToCode.generateProjectStructure(payload);
+      console.log(res, "...ress");
+      if (res) {
+        setShowStructure(true);
+        setStructure({
+          content: res.content || null,
+          s3_url: res?.s3_url,
+          project_id: res.project_id,
+        });
+      }
+    } else {
+      console.log("Please upload a zip file.");
     }
+  };
 
-    console.log(selectedBrdFile, "iiii")
+  console.log(selectedBrdFile, "iiii");
 
   return (
     <>
@@ -74,12 +99,18 @@ export const StoryToSnippet: FC = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            px: 4,
             justifyContent: "center",
             flexDirection: "column",
           }}
         >
-          <Card sx={{ minWidth: 520, borderRadius: "10px" }}>
+          <Card
+            sx={{
+              minWidth: "32rem",
+              minHeight: "34rem",
+              borderRadius: "10px",
+              mt: "5rem",
+            }}
+          >
             <CardContent>
               <form onSubmit={(e) => generateStructure(e)}>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -90,8 +121,7 @@ export const StoryToSnippet: FC = () => {
                   </Typography>
                   <TextField
                     id="userstory"
-                    label="Enter/Paste User Story Here"
-                    placeholder="Enter/Paste User Story Here"
+                    placeholder="Enter User Story Here"
                     multiline
                     required
                     minRows={3}
@@ -111,7 +141,6 @@ export const StoryToSnippet: FC = () => {
                   </Typography>
                   <TextField
                     id="TechStack"
-                    label="Enter Tech Stack Here"
                     placeholder="Enter Tech Stack Here"
                     multiline
                     required

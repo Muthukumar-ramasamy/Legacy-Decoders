@@ -18,7 +18,7 @@ const GeneratedStory = (props: any) => {
                 position: "relative",
                 backgroundColor: "white",
                 borderRadius: "16px",
-                height: "450px",
+                height: "75vh",
                 boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.3)",
                 overflow: "hidden",
               }}
@@ -51,7 +51,7 @@ const GeneratedStory = (props: any) => {
                 <img
                   src={DownloadIcon}
                   style={{
-                    width: "25px", 
+                    width: "25px",
                     cursor: "pointer",
                   }}
                   onClick={() => {
@@ -98,7 +98,7 @@ const GeneratedStory = (props: any) => {
                 position: "relative",
                 backgroundColor: "white",
                 borderRadius: "16px",
-                height: "450px",
+                height: "75vh",
                 boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.3)",
                 overflow: "hidden",
               }}
@@ -132,7 +132,7 @@ const GeneratedStory = (props: any) => {
                 <img
                   src={DownloadIcon}
                   style={{
-                    width: "25px", 
+                    width: "25px",
                     cursor: "pointer",
                   }}
                   onClick={() => {

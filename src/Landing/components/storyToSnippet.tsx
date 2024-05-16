@@ -6,6 +6,7 @@ import storyToCode from "../service/codeGenerator";
 import FileProcessingCard from "./fileProgress";
 import { useNavigate } from "react-router-dom";
 import ProjectStructure from "./projectStructure";
+import { UploadPopUp } from "./UploadPopUp";
 
 export const StoryToSnippet: FC = () => {
     const navigate = useNavigate()
@@ -17,7 +18,7 @@ export const StoryToSnippet: FC = () => {
     const [projectId, setProjectId] = useState(null)
     const [structure, setStructure] = useState({ content: '', s3_url: '', project_id: null })
     const [showStructure, setShowStructure] = useState(false)
-
+    const [fileUpload, setFileUpload] = useState(false);
 
     const generateBrdContent = async () => {
         const payload = {
@@ -64,99 +65,171 @@ export const StoryToSnippet: FC = () => {
 
     console.log(selectedBrdFile, "iiii")
 
-    return (
-        <>
-            <Box sx={{ display: "flex", alignItems: "center", px: 4, justifyContent: "center", flexDirection: 'column' }}>
-                <Card sx={{ minWidth: 520, borderRadius: "10px" }}>
-                    <CardContent>
-                        <form onSubmit={(e) => generateStructure(e)}>
-                            <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                <Typography sx={{ display: "flex", justifyContent: "flex-start", p: 1 }}>{"User Story"}</Typography>
-                                <TextField
-                                    id="userstory"
-                                    label="Enter/Paste User Story Here"
-                                    placeholder="Enter/Paste User Story Here"
-                                    multiline
-                                    required
-                                    minRows={3}
-                                    value={userStory}
-                                    sx={{ minWidth: "370px", minHeight: "100px" }}
-                                    onChange={(e) => setUserStory(e.target.value)}
-                                />
-                                <Typography sx={{ display: "flex", justifyContent: "flex-start", p: 1, pt: 2 }}>{"Tech stack"}</Typography>
-                                <TextField
-                                    id="TechStack"
-                                    label="Enter Tech Stack Here"
-                                    placeholder="Enter Tech Stack Here"
-                                    multiline
-                                    required
-                                    value={techStack}
-                                    minRows={1}
-                                    sx={{ minWidth: "370px", minHeight: "50px" }}
-                                    onChange={(e) => setTechStack(e.target.value)}
-                                />
-                            </Box>
-                            <Box display={"flex"} flexDirection={"column"} justifyContent={"flex-start"} paddingTop={2}>
-                                <RadioGroup
-                                    onChange={(e) => setSelectedBrdVal(e.target.value)}
-                                    aria-labelledby="demo-form-control-label-placement"
-                                    value={selectedBrdVal}
-                                    name="position">
-                                    <FormControlLabel value="0" control={<Radio />} label="I have Business Requirements Document (BRD) file" />
-                                    <FormControlLabel value="1" control={<Radio />} label="I don't have Business Requirements Document (BRD) file" />
-                                </RadioGroup>
-                            </Box>
-                            {selectedBrdVal && selectedBrdVal === "0" ?
-                                <Box component={"div"} my={3} sx={{ display: "flex", flexDirection: "column", justifyContent:"center" }}>
-                                    {selectedBrdFile && selectedBrdFile.name ?
-                                        <FileProcessingCard
-                                            fileName={selectedBrdFile.name}
-                                            fileSize={selectedBrdFile.size}
-                                            progressstatus={"complete"}
-                                            onRemove={() => { setSelectedBrdFile(null) }}
-                                        />
-                                        :
-                                        <>
-                                            <Typography
-                                                component={"div"}
-                                                display={"flex"}
-                                                justifySelf={"center"}
-                                            >
-                                                {"Upload BRD file as '.txt' file"}
-                                            </Typography>
-                                            <Filebox
-                                                isStoryToSyntex={true}
-                                                onChange={(file: File | null) => {
-                                                    console.log(file, "...selected file");
-                                                    setSelectedBrdFile(file);
-                                                }} isFormSubmitted={false} />
-                                        </>}
-
-                                </Box>
-                                :
-                                <Box sx={{ py: 2, display: "flex", flexDirection: "column" }}>
-                                    {brdTxt ? <TextField
-                                        id="BRD"
-                                        label="Business Requirements Document (BRD)"
-                                        placeholder="Enter BRD Here"
-                                        multiline
-                                        value={brdTxt}
-                                        disabled
-                                        minRows={5}
-                                        sx={{ minWidth: "370px", minHeight: "150px" }}
-                                        onChange={(e) => setBrdTxt(e.target.value)}
-                                    /> : <Button variant="outlined" sx={{ width: "fit-content", mb: 2 }} onClick={() => generateBrdContent()}>Generate BRD</Button>}
-
-                                </Box>}
-                            <Button type="submit" variant="contained" disabled={!projectId && !selectedBrdFile}>Generate Project Structure</Button>
-                        </form >
-                    </CardContent>
-                </Card>
-            </Box >
-            {<ProjectStructure structure={structure} showStructure={showStructure} setShowStructure={setShowStructure} />}
-        </>
-
-    )
-}
+  return (
+    <>
+      {fileUpload ? (
+        <UploadPopUp setBack={() => setFileUpload(false)} />
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            px: 4,
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Card sx={{ minWidth: 520, borderRadius: "10px" }}>
+            <CardContent>
+              <form onSubmit={(e) => generateStructure(e)}>
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography
+                    sx={{ display: "flex", justifyContent: "flex-start", p: 1 }}
+                  >
+                    {"User Story"}
+                  </Typography>
+                  <TextField
+                    id="userstory"
+                    label="Enter/Paste User Story Here"
+                    placeholder="Enter/Paste User Story Here"
+                    multiline
+                    required
+                    minRows={3}
+                    value={userStory}
+                    sx={{ minWidth: "370px", minHeight: "100px" }}
+                    onChange={(e) => setUserStory(e.target.value)}
+                  />
+                  <Typography
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      p: 1,
+                      pt: 2,
+                    }}
+                  >
+                    {"Tech stack"}
+                  </Typography>
+                  <TextField
+                    id="TechStack"
+                    label="Enter Tech Stack Here"
+                    placeholder="Enter Tech Stack Here"
+                    multiline
+                    required
+                    value={techStack}
+                    minRows={1}
+                    sx={{ minWidth: "370px", minHeight: "50px" }}
+                    onChange={(e) => setTechStack(e.target.value)}
+                  />
+                </Box>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  justifyContent={"flex-start"}
+                  paddingTop={2}
+                >
+                  <RadioGroup
+                    onChange={(e) => setSelectedBrdVal(e.target.value)}
+                    aria-labelledby="demo-form-control-label-placement"
+                    value={selectedBrdVal}
+                    name="position"
+                  >
+                    <FormControlLabel
+                      value="0"
+                      control={<Radio />}
+                      label="I have Business Requirements Document (BRD) file"
+                    />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio />}
+                      label="I don't have Business Requirements Document (BRD) file"
+                    />
+                  </RadioGroup>
+                </Box>
+                {selectedBrdVal && selectedBrdVal === "0" ? (
+                  <Box
+                    component={"div"}
+                    my={3}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {selectedBrdFile && selectedBrdFile.name ? (
+                      <FileProcessingCard
+                        fileName={selectedBrdFile.name}
+                        fileSize={selectedBrdFile.size}
+                        progressstatus={"complete"}
+                        onRemove={() => {
+                          setSelectedBrdFile(null);
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <Typography
+                          component={"div"}
+                          display={"flex"}
+                          justifySelf={"center"}
+                        >
+                          {"Upload BRD file as '.txt' file"}
+                        </Typography>
+                        <Filebox
+                          isStoryToSyntex={true}
+                          onChange={(file: File | null) => {
+                            console.log(file, "...selected file");
+                            setSelectedBrdFile(file);
+                          }}
+                          isFormSubmitted={false}
+                        />
+                      </>
+                    )}
+                  </Box>
+                ) : (
+                  <Box sx={{ py: 2, display: "flex", flexDirection: "column" }}>
+                    {brdTxt ? (
+                      <TextField
+                        id="BRD"
+                        label="Business Requirements Document (BRD)"
+                        placeholder="Enter BRD Here"
+                        multiline
+                        value={brdTxt}
+                        disabled
+                        minRows={5}
+                        sx={{ minWidth: "370px", minHeight: "150px" }}
+                        onChange={(e) => setBrdTxt(e.target.value)}
+                      />
+                    ) : (
+                      <Button
+                        variant="outlined"
+                        sx={{ width: "fit-content", mb: 2 }}
+                        onClick={() => generateBrdContent()}
+                      >
+                        Generate BRD
+                      </Button>
+                    )}
+                  </Box>
+                )}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!projectId && !selectedBrdFile}
+                >
+                  Generate Project Structure
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+      {
+        <ProjectStructure
+          structure={structure}
+          showStructure={showStructure}
+          setShowStructure={setShowStructure}
+        />
+      }
+    </>
+  );
+};
 
 export default StoryToSnippet;

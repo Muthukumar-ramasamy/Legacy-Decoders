@@ -332,3 +332,4 @@ export const Home: FC = () => {
     </Box>
   );
 };
+

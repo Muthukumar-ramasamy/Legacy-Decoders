@@ -14,7 +14,7 @@ export const getAuthToken = () => {
 };
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/api/legacy/",
+  baseURL: "http://192.168.22.207:8080/api/legacy/",
   headers: headers,
 });
 
@@ -31,7 +31,6 @@ const onResponse = (response) => {
 };
 
 const onResponseError = (error) => {
-  console.log(error);
   const { status } = error?.response;
   switch (status) {
     case 403:
@@ -41,7 +40,6 @@ const onResponseError = (error) => {
       break;
     }
     default: {
-      console.log(error);
       break;
     }
   }
@@ -49,7 +47,6 @@ const onResponseError = (error) => {
 };
 
 const onRequestError = (error) => {
-  console.log(error);
   return error;
 };
 

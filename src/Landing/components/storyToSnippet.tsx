@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, useState } from "react";
+import React, { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { Box } from "@mui/system";
 import {
   Button,
@@ -11,6 +11,7 @@ import {
   RadioGroup,
   TextField,
   Typography,
+  useEventCallback,
 } from "@mui/material";
 import { Filebox } from "./Filebox";
 import storyToCode from "../service/codeGenerator";
@@ -24,7 +25,7 @@ export const StoryToSnippet: FC = () => {
   const [techStack, setTechStack] = useState<string>("");
   const [selectedBrdFile, setSelectedBrdFile] = useState<File | null>(null);
   const [selectedBrdVal, setSelectedBrdVal] = useState("");
-  const [brdTxt, setBrdTxt] = useState("");
+  const [brdTxt, setBrdTxt] = useState("") as any;
   const [userStory, setUserStory] = useState("");
   const [projectId, setProjectId] = useState(null);
   const [structure, setStructure] = useState({
@@ -34,53 +35,77 @@ export const StoryToSnippet: FC = () => {
   });
   const [showStructure, setShowStructure] = useState(false);
   const [fileUpload, setFileUpload] = useState(false);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [fileStatus, setFileStatus] = useState<any>();
+  const [status, setStatus] = useState<{ [key: string]: boolean[] }>();
+
+  useEffect(() => {
+    if (messages.length !== 0 && messages) {
+      setFileUpload(true);
+      setShowStructure(false);
+    }
+  }, [messages]);
+
+  const serverEvent = () => {
+    const eventSource = new EventSource(
+      "http://192.168.22.207:8080/api/legacy/sse"
+    );
+    eventSource.addEventListener("files", (event: any) => {
+      const newMessage = JSON.parse(event.data);
+      setMessages(newMessage);
+    });
+
+    eventSource.onerror = (error) => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  };
 
   const generateBrdContent = async () => {
     const payload = {
       story: userStory,
       tech: techStack,
-      user_name: "admin",
+      user_name: "dbabu",
     };
     const res = await storyToCode.generateBrd(payload);
-    console.log(res, "...ress");
-    if (res.content) {
-      setBrdTxt(res.content);
-      setProjectId(res.project_id);
+    if (res) {
+      setBrdTxt(res);
+      setProjectId(res);
     }
   };
 
   const generateStructure = async (e: FormEvent) => {
     e.preventDefault();
     if (projectId) {
-      const res = await storyToCode.getStructureByProjectId(projectId);
+      const res = (await storyToCode.getStructureByProjectId(projectId)) as any;
       if (res) {
         setShowStructure(true);
         setStructure({
-          content: res.content || null,
+          content: res.content,
           s3_url: res?.s3_url,
           project_id: res.project_id,
         });
       }
-    } else if (
-      selectedBrdFile &&
-      selectedBrdFile.type === "application/x-zip-compressed"
-    ) {
+    } else if (selectedBrdFile && selectedBrdFile.type === "text/plain") {
       const brd_file = new FormData();
       brd_file.append("brd_file", selectedBrdFile);
       const payload = {
         story: userStory,
         tech: techStack,
-        user_name: "admin",
+        user_name: "dbabu",
         brdFile: brd_file,
       };
-      const res = await storyToCode.generateProjectStructure(payload);
-      console.log(res, "...ress");
+      const res = (await storyToCode.generateProjectStructure(payload)) as any;
+      setShowStructure(true);
       if (res) {
         setShowStructure(true);
         setStructure({
-          content: res.content || null,
-          s3_url: res?.s3_url,
-          project_id: res.project_id,
+          content: res?.data?.content,
+          s3_url: res?.data?.s3_url,
+          project_id: res?.data?.project_id,
         });
       }
     } else {
@@ -88,12 +113,14 @@ export const StoryToSnippet: FC = () => {
     }
   };
 
-  console.log(selectedBrdFile, "iiii");
-
   return (
     <>
       {fileUpload ? (
-        <UploadPopUp setBack={() => setFileUpload(false)} />
+        <UploadPopUp
+          serverEvents={messages}
+          setBack={() => setFileUpload(false)}
+          // fileStatus={fileStatus}
+        />
       ) : (
         <Box
           sx={{
@@ -161,16 +188,20 @@ export const StoryToSnippet: FC = () => {
                     aria-labelledby="demo-form-control-label-placement"
                     value={selectedBrdVal}
                     name="position"
+                    row
                   >
                     <FormControlLabel
                       value="0"
                       control={<Radio />}
-                      label="I have Business Requirements Document (BRD) file"
+                      label="BRD Available&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes"
+                      style={{ margin: "0px" }}
+                      labelPlacement="start"
                     />
                     <FormControlLabel
                       value="1"
                       control={<Radio />}
-                      label="I don't have Business Requirements Document (BRD) file"
+                      label="No"
+                      labelPlacement="start"
                     />
                   </RadioGroup>
                 </Box>
@@ -205,7 +236,6 @@ export const StoryToSnippet: FC = () => {
                         <Filebox
                           isStoryToSyntex={true}
                           onChange={(file: File | null) => {
-                            console.log(file, "...selected file");
                             setSelectedBrdFile(file);
                           }}
                           isFormSubmitted={false}
@@ -228,23 +258,27 @@ export const StoryToSnippet: FC = () => {
                         onChange={(e) => setBrdTxt(e.target.value)}
                       />
                     ) : (
-                      <Button
-                        variant="outlined"
-                        sx={{ width: "fit-content", mb: 2 }}
-                        onClick={() => generateBrdContent()}
-                      >
-                        Generate BRD
-                      </Button>
+                      <></>
                     )}
                   </Box>
                 )}
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!projectId && !selectedBrdFile}
-                >
-                  Generate Project Structure
-                </Button>
+                {selectedBrdVal === "1" ? (
+                  <Button
+                    variant="outlined"
+                    sx={{ width: "fit-content", mb: 2 }}
+                    onClick={() => generateBrdContent()}
+                  >
+                    Generate BRD
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={!projectId && !selectedBrdFile}
+                  >
+                    Generate Project Structure
+                  </Button>
+                )}
               </form>
             </CardContent>
           </Card>
@@ -255,6 +289,7 @@ export const StoryToSnippet: FC = () => {
           structure={structure}
           showStructure={showStructure}
           setShowStructure={setShowStructure}
+          serverEvent={serverEvent}
         />
       }
     </>
@@ -262,3 +297,4 @@ export const StoryToSnippet: FC = () => {
 };
 
 export default StoryToSnippet;
+

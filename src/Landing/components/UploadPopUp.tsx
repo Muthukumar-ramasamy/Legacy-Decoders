@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { ArrowForward } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { UploadFileLoader } from "./UploadFileLoader";
 
 export const UploadPopUp = (props: any) => {
+  const { serverEvents } = props;
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [cancel, setCancel] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  // const [cancel, setCancel] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // const fileArray = Array.from(serverEvents.entries());
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -27,56 +21,29 @@ export const UploadPopUp = (props: any) => {
     };
   }, []);
 
-  const fileJson = {
-    files: [
-      "/AuthApp/src/main/java/com/authapp/controllers/UserController.java",
-      "/AuthApp/src/main/java/com/authapp/models/User.java",
-      "/AuthApp/src/main/java/com/authapp/repositories/UserRepository.java",
-      "/AuthApp/src/main/java/com/authapp/security/SecurityConfig.java",
-      "/AuthApp/src/main/java/com/authapp/services/UserService.java",
-      "/AuthApp/src/main/java/com/authapp/Application.java",
-      "/AuthApp/src/main/resources/application.properties",
-      "/AuthApp/test/java/com/authapp/UserControllerTest.java",
-      "/AuthApp/Dockerfile",
-      "/AuthApp/pom.xml",
-      "/AuthApp/README.md",
-    ],
-  };
-
   const loadingData = [
-    { name: "Your experience is just a moment away......", color: "#ff1744" },
+    { name: "Your experience is just a moment away..." },
     {
-      name: "Sit tight while we prepare everything for you......",
-      color: "#ff9100",
+      name: "Sit tight while we prepare everything for you...",
     },
     {
-      name: "We're getting things ready for you. Sit tight!......",
-      color: "#3d5afe",
+      name: "We're getting things ready for you. Sit tight!...",
     },
     {
-      name: "Just a quick sec... Your experience is worth the wait!",
-      color: "#00e676",
+      name: "Just a quick sec... Your experience is worth the wait!...",
     },
-    { name: "Making sure everything's perfect for you!", color: "#00e5ff" },
+    { name: "Making sure everything's perfect for you!..." },
   ];
-
-  const handleProceed = () => {
-    setIsLoading(!isLoading);
-  };
-
-  const handleCancel = () => {
-    setIsLoading(!isLoading);
-    setCancel(!cancel);
-  };
 
   const getFileName = (file: string) => {
     const filePath = file;
+    console.log("filePath", filePath);
 
     const parts = filePath.split("/");
 
-    const fileName = parts[parts.length - 1];
+    return parts[parts.length - 1];
 
-    return fileName.split(".")[0];
+    // return fileName.split(".")[0];
   };
 
   return (
@@ -94,6 +61,7 @@ export const UploadPopUp = (props: any) => {
           marginLeft: "2.5%",
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
           overflow: "hidden",
+          zIndex: "1000",
         }}
       >
         <Stack
@@ -105,7 +73,7 @@ export const UploadPopUp = (props: any) => {
             position: "relative",
           }}
         >
-          <Stack sx={{ position: "absolute", top: "10px", left: "10px" }}>
+          {/* <Stack sx={{ position: "absolute", top: "10px", left: "10px" }}>
             <Typography
               variant="body1"
               sx={{
@@ -122,14 +90,14 @@ export const UploadPopUp = (props: any) => {
                 Go Back
               </Typography>
             </Typography>
-          </Stack>
+          </Stack> */}
           <Stack sx={{ height: "40%" }}>
             {isLoading ? (
               <Stack>
                 <Typography
                   key={currentIndex}
                   fontSize={20}
-                  sx={{ color: loadingData[currentIndex].color }}
+                  sx={{ color: "#3d5afe" }}
                 >
                   {loadingData[currentIndex].name}
                 </Typography>
@@ -140,7 +108,7 @@ export const UploadPopUp = (props: any) => {
         <Stack
           sx={{
             overflowY: "auto",
-            height: "calc(100% - 200px)",
+            height: "calc(100% - 132px)",
             "&::-webkit-scrollbar": {
               width: "4px",
             },
@@ -163,72 +131,49 @@ export const UploadPopUp = (props: any) => {
             sx={{
               marginBottom: "2px",
               flexGrow: 1,
-              padding: "0.5em",
+              padding: "0.5rem",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            {fileJson?.files?.map((file, index) => (
+            {Object.entries(serverEvents)?.map(([filename, status], index) => (
               <Stack
                 key={index}
                 direction="row"
                 alignItems="center"
                 sx={{
                   marginBottom: "10px",
-                  width: "100%",
+                  width: "50%",
+                  border: "1px solid gray",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  borderRadius: "5px",
                 }}
               >
-                <Box
+                <Typography
+                  fontSize={16}
+                  align="left"
+                  alignItems="center"
+                  textOverflow={"ellipsis"}
+                  whiteSpace={"nowrap"}
+                  overflow={"hidden"}
                   sx={{
-                    backgroundColor: "#fff",
-                    borderRadius: "10px",
-                    border: "0.5px solid black",
                     padding: "10px",
-                    width: "85%",
-                    boxShadow: "0px 0px 3px rgba(0, 0, 0, 0.5)",
-                    marginBottom: "10px",
+                    width: "40%",
                   }}
                 >
-                  <Typography
-                    fontSize={12}
-                    align="left"
-                    textOverflow={"ellipsis"}
-                    whiteSpace={"nowrap"}
-                    overflow={"hidden"}
-                  >
-                    {getFileName(file)}
-                  </Typography>
-                </Box>
-                <Stack sx={{ marginLeft: "10%" }}>
-                  {isSuccess && <CheckCircleIcon sx={{ color: "green" }} />}
-                  {isLoading && <CircularProgress key={index} />}
-                  {cancel && <CancelIcon sx={{ color: "red" }} />}
+                  {getFileName(filename)}
+                </Typography>
+                <Stack sx={{ marginRight: "10px" }}>
+                  <UploadFileLoader
+                    width="30px"
+                    height="30px"
+                    type={`${status ? "success" : "loader"}`}
+                  />
                 </Stack>
               </Stack>
             ))}
           </Stack>
-        </Stack>
-        <Stack
-          direction="row"
-          justifyContent="center"
-          sx={{
-            marginTop: "25px",
-          }}
-        >
-          {cancel && (
-            <Button variant="text" sx={{ border: "0.5px solid blue" }}>
-              Cancled
-            </Button>
-          )}
-          {isLoading && (
-            <Button variant="outlined" onClick={handleCancel}>
-              Cancel
-            </Button>
-          )}
-          {isSuccess && (
-            <Button variant="contained" onClick={handleProceed}>
-              Proceed to Convert
-              <ArrowForward fontSize="inherit" />
-            </Button>
-          )}
         </Stack>
       </Box>
     </>

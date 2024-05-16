@@ -125,13 +125,40 @@ export const Home: FC = () => {
                 </Box>
                 <Box sx={{ backgroundColor: "#fff", borderRadius: "10px" }}>
                     <ToggleButtonGroup
+                        sx={{
+                            m: "4px",
+                            ">.Mui-selected": {
+                                border: "2px solid #1976d2",
+                                borderRadius: "10px",
+                                backgroundColor: "#1976d236 !important",
+                                color: "#111EFF"
+                            }
+                        }}
                         color="primary"
                         value={tabVal}
                         exclusive
                         onChange={(_, newValue) => handleChange(newValue)}
                         aria-label="Platform">
-                        <ToggleButton value="Code to Story" sx={{ fontSize: "14px", fontWeight: 600 }}>Code to Story</ToggleButton>
-                        <ToggleButton value="Story to Code" sx={{ fontSize: "14px", fontWeight: 600 }}>Story to Code</ToggleButton>
+                        <ToggleButton
+                            value="Code to Story"
+                            sx={{
+                                border: 0,
+                                fontSize: "14px",
+                                fontWeight: 600,
+                                textTransform: "unset"
+                            }}>
+                            Code to Story
+                        </ToggleButton>
+                        <ToggleButton
+                            value="Story to Code"
+                            sx={{
+                                border: 0,
+                                fontSize: "14px",
+                                fontWeight: 600,
+                                textTransform: "unset"
+                            }}>
+                            Story to Code
+                        </ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
                 <Box sx={{ marginLeft: "16%" }}>

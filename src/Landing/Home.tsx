@@ -1,15 +1,14 @@
-import { Box, ToggleButtonGroup, ToggleButton, Typography, Tooltip, IconButton, Button, Drawer, CardContent, Card, List, ListItem } from "@mui/material";
-import { FC, useEffect, useState } from "react";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Box, Typography, Button, Drawer, CardContent, Card, IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
+import { FC, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { MagicDecoder } from "./components/magicDecoder";
-import { Filebox } from "./components/Filebox";
-import Avatar from '@mui/material/Avatar';
 import { StoryToSnippet } from "./components/storyToSnippet";
-import logo from "../assets/Vector.png"
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CloseIcon from "@mui/icons-material/Close";
-import { FolderZip, Download } from "@mui/icons-material";
 import HistoryList from "./history/HistoryList";
+import welcome from "../assets/Welcome.png"
+import logo from "../assets/Vector.png"
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 const historyValues = [
@@ -46,9 +45,25 @@ export const Home: FC = () => {
         }
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        window.location.href = "/auth"
+    }
+
     return (
         <Box id="homee">
-            <Box sx={{ my: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box
+                sx={{
+                    py: 3,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundImage: `url(${welcome})`,
+                    backgroundSize: "cover",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 10
+                }}>
                 <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box
                         component={"img"}
@@ -74,13 +89,12 @@ export const Home: FC = () => {
                     </ToggleButtonGroup>
                 </Box>
                 <Box sx={{ marginLeft: "16%" }}>
-                    <Tooltip title="Account settings">
+                    <Tooltip title="Logout">
                         <IconButton
-                            onClick={() => { console.log("clicked") }}
+                            onClick={handleLogout}
                             size="small"
-                            sx={{ width: 56, height: 56, mr: 6 }}
-                        >
-                            <Avatar sx={{ width: 46, height: 46 }}>LT</Avatar>
+                            sx={{ width: 56, height: 56, mr: 6 }}>
+                            <LogoutIcon />
                         </IconButton>
                     </Tooltip>
                 </Box>

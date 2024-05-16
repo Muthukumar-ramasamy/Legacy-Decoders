@@ -15,7 +15,7 @@ export const getAuthToken = () => {
 
 
 export const axiosInstance = axios.create({
-    baseURL: 'http://legacy-alb-669407586.us-east-1.elb.amazonaws.com/api/legacy',
+    baseURL: 'http://legacy-transformer-alb-287742165.us-east-1.elb.amazonaws.com/api/legacy',
     headers: headers
 });
 

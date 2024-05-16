@@ -10,6 +10,7 @@ import welcome from "../assets/Welcome.png"
 import logo from "../assets/Vector.png"
 import LogoutIcon from '@mui/icons-material/Logout';
 import { UploadPopUp } from "./components/UploadPopUp";
+import { GenerateProject } from "./components/project";
 
 
 const historyValues = [
@@ -248,11 +249,7 @@ export const Home: FC = () => {
                         justifyContent: "center",
                         alignItems: "center"
                     }}>
-                        <Card elevation={2} sx={{ width: "50%", borderRadius: "10px", p: 0 }}>
-                            <CardContent sx={{ width: "100%" }}>
-                                <HistoryList values={historyValues} />
-                            </CardContent>
-                        </Card>
+                        <GenerateProject />
                     </Box>
                 </Box>
             </Drawer>

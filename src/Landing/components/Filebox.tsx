@@ -129,7 +129,7 @@ export const Filebox: FC<{ onChange: (file: File) => void, isFormSubmitted: bool
                     position: "relative",
                     borderRadius: "4px",
                     padding: "24px 16px",
-                    height: isStoryToSyntex ? 150 : ""
+                    height: isStoryToSyntex ? 150 : 170
                 },
                 (theme) => ({ ...borderColor(theme) }),
             ]}

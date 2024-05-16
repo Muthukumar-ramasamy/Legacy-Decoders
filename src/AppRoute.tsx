@@ -4,6 +4,8 @@ import { Landing } from "./Landing/Landing";
 import { Home } from "./Landing/Home";
 import AuthModule from "./auth/Auth.module";
 import SecureRoute from "./auth/SecureRoute";
+import { MagicDecoder } from "./Landing/components/magicDecoder";
+import StoryToSnippet from "./Landing/components/storyToSnippet";
 
 export const AppRoutes: FC = () => {
     return (
@@ -14,14 +16,17 @@ export const AppRoutes: FC = () => {
                     <Route element={<SecureRoute />}>
                         <Route path="/*" element={<Home />} />
                         <Route
-                            path={"/"}
+                            path={"/magic-decoder"}
                             element={
-                                <Navigate
-                                    to={"/story-to-syntex"}
-                                    replace
-                                />
+                                <MagicDecoder />
                             }
                         />
+                          <Route
+                            path={"/story-to-syntex"}
+                            element={
+                                <StoryToSnippet />
+                            }
+                        />                      
                     </Route>
                 </Route>
             </Routes>

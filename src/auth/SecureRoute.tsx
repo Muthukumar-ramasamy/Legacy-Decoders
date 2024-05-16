@@ -10,7 +10,7 @@ const SecureRoute = () => {
         if (!token) {
             navigate("/auth")
         } else {
-            navigate("/story-to-syntex")
+            <Outlet />
         }
     }, [])
 

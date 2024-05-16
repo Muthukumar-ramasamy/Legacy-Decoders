@@ -15,18 +15,15 @@ export const AppRoutes: FC = () => {
                     <Route path="/auth/*" element={<AuthModule />} />
                     <Route element={<SecureRoute />}>
                         <Route path="/*" element={<Home />} />
-                        <Route
-                            path={"/magic-decoder"}
+                         <Route
+                            path={"/"}
                             element={
-                                <MagicDecoder />
+                                <Navigate
+                                    to={"/story-to-syntex"}
+                                    replace
+                                />
                             }
                         />
-                          <Route
-                            path={"/story-to-syntex"}
-                            element={
-                                <StoryToSnippet />
-                            }
-                        />                      
                     </Route>
                 </Route>
             </Routes>

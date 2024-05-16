@@ -1,6 +1,6 @@
 import { Box, Typography, Button, Drawer, CardContent, Card, IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
-import { FC, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { Route, Routes, Link, useNavigate, useLocation } from "react-router-dom";
 import { MagicDecoder } from "./components/magicDecoder";
 import { StoryToSnippet } from "./components/storyToSnippet";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -9,6 +9,7 @@ import HistoryList from "./history/HistoryList";
 import welcome from "../assets/Welcome.png"
 import logo from "../assets/Vector.png"
 import LogoutIcon from '@mui/icons-material/Logout';
+import { UploadPopUp } from "./components/UploadPopUp";
 
 
 const historyValues = [
@@ -29,12 +30,57 @@ const historyValues = [
         date: "01/01/2024"
     }
 ]
-
-
 export const Home: FC = () => {
+    const [showHistory, setShowHistory] = useState(false)
     const navigate = useNavigate();
-    const [tabVal, setTabVal] = useState("Code to Story");
-    const [showHistory, setShowHistory] = useState(true)
+    const location = useLocation();
+    const [tabVal, setTabVal] = useState("");
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+        setIsScrolled(window.scrollY != 0);
+        };
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+        window.removeEventListener("scroll", handleScroll);
+        };
+    }, [window.scrollY]);
+
+    useEffect(() => {
+        const handleReload = () => {
+        window.scrollTo(0, 0);
+        };
+
+        window.addEventListener("beforeunload", handleReload);
+
+        return () => {
+        window.removeEventListener("beforeunload", handleReload);
+        };
+    }, []);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [useLocation().pathname]);
+
+    useEffect(() => {
+        const path = location.pathname;
+        const extractedValue = path.slice(path.lastIndexOf('/') + 1);
+        const translateValue = (value) => {
+          switch (value) {
+            case "story-to-syntex":
+              return "Story to Code";
+            case "magic-decoder":
+                return "Code to Story";
+            default:
+              return value;
+          }
+        };
+
+        const transformedValue = translateValue(extractedValue);
+        setTabVal(transformedValue);
+      }, [location]);
 
     const handleChange = (newValue: string) => {
         setTabVal(newValue);

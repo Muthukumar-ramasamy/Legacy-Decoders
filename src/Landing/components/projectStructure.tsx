@@ -34,7 +34,14 @@ const ProjectStructure: FC<{
   showStructure: boolean;
   setShowStructure: (val: boolean) => void;
   serverEvent: () => void;
-}> = ({ structure, showStructure, setShowStructure, serverEvent }) => {
+  setProjectZip: any;
+}> = ({
+  structure,
+  showStructure,
+  setShowStructure,
+  serverEvent,
+  setProjectZip,
+}) => {
   const [isZipGenerated, setIsZipGenerated] = useState(false);
 
   const handleClose = () => {
@@ -46,7 +53,8 @@ const ProjectStructure: FC<{
     serverEvent();
     const projectZip = await storyToCode.getProjectZip(projectId);
     if (projectZip) {
-      setIsZipGenerated(true);
+      // setIsZipGenerated(true);
+      setProjectZip(projectZip);
     }
   };
 

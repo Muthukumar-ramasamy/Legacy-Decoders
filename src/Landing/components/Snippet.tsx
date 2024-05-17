@@ -27,7 +27,14 @@ const Snippet: FC<{
   showStructure: boolean;
   setShowStructure: (val: boolean) => void;
   serverEvent: () => void;
-}> = ({ structure, showStructure, setShowStructure, serverEvent }) => {
+  setProjectZip: any;
+}> = ({
+  structure,
+  showStructure,
+  setShowStructure,
+  serverEvent,
+  setProjectZip,
+}) => {
   const [isZipGenerated, setIsZipGenerated] = useState(false);
 
   const handleClose = () => {
@@ -39,132 +46,144 @@ const Snippet: FC<{
     serverEvent();
     const projectZip = await storyToCode.getProjectZip(projectId);
     if (projectZip) {
-      setIsZipGenerated(true);
+      // setIsZipGenerated(true);
+      setProjectZip(projectZip);
     }
   };
 
   return (
     <>
-        {!isZipGenerated ? (
-          <Box
-            id="structure"
-            sx={{ p: 1, display: "flex", flexDirection: "column" }}
+      {!isZipGenerated ? (
+        <Box
+          id="structure"
+          sx={{ p: 1, display: "flex", flexDirection: "column" }}
+        >
+          <pre
+            style={{
+              fontStyle: "inherit",
+              padding: "10px",
+              backgroundColor: "rgb(250 251 255)",
+              whiteSpace: "break-spaces",
+            }}
           >
-            <pre
-              style={{
-                fontStyle: "inherit",
-                padding: "10px",
-                backgroundColor: "rgb(250 251 255)",
-                whiteSpace: "break-spaces",
-              }}
-            >
-              <Typography fontWeight="600" color="black" marginBottom={"5px"}>
-                Description:
-                <br />
-              </Typography>
+            <Typography fontWeight="600" color="black" marginBottom={"5px"}>
+              Description:
+              <br />
+            </Typography>
+            <Typography
+              fontFamily={"sans-serif"}
+            >{`${structure?.content?.project_details}`}</Typography>
+            <Stack>
               <Typography
-                fontFamily={"sans-serif"}
-              >{`${structure?.content?.project_details}`}</Typography>
-              <Stack>
-                <Typography
-                  paddingTop={"8px"}
-                  textAlign={"left"}
-                  fontWeight="600"
-                  color="black"
+                paddingTop={"8px"}
+                textAlign={"left"}
+                fontWeight="600"
+                color="black"
+              >
+                Structure:
+              </Typography>
+              <Stack
+                justifyContent="center"
+                alignItems="center"
+                sx={{ p: "0.5rem", height: "100%", width: "100%" }}
+              >
+                <br />
+                <Paper
+                  elevation={3}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "black",
+                    color: "white",
+                  }}
                 >
-                  Structure:
-                </Typography>
-                <Stack
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{ p: "0.5rem", height: "100%", width: "100%" }}
-                >
-                  <br />
-                  <Paper
-                    elevation={3}
+                  <Stack
+                    // height="1rem"
+                    width="100%"
                     sx={{
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "black",
-                      color: "white",
+                      backgroundColor: "#2f2f2f",
+                      borderRadius: " 4px 4px 0px 0",
+                    }}
+                  ></Stack>
+                  <Stack
+                    sx={{
+                      p: "1rem",
+                      maxHeight: "24rem",
+                      lineHeight: "25px",
+                      overflowY: "auto",
+                      overFlow: "auto",
+                      paddingY: 3,
                     }}
                   >
-                    <Stack
-                      height="1rem"
-                      width="100%"
-                      sx={{
-                        backgroundColor: "#2f2f2f",
-                        borderRadius: " 4px 4px 0px 0",
-                      }}
-                    ></Stack>
-                    <Stack sx={{ p: "1rem", maxHeight:"40vh", lineHeight: "25px", overflowY: "auto", overFlow: "auto", paddingY: 3}}>
-                      {structure?.content?.project_structure}
-                    </Stack>
-                  </Paper>
-                </Stack>
+                    {structure?.content?.project_structure}
+                  </Stack>
+                </Paper>
               </Stack>
-            </pre>
+            </Stack>
+          </pre>
 
-            <Box
-              component={"div"}
-              sx={{
-                pb: 4,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                variant="contained"
-                onClick={() => {generateCode(structure.project_id);}}
-                sx={{ width: "fit-content", my: 2 }}
-              >
-                Proceed to generate code
-              </Button>
-            </Box>
-          </Box>
-        ) : (
           <Box
-            id="download-zip"
+            component={"div"}
             sx={{
+              pb: 4,
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-end",
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" fontWeight={600}>
-              Your Generated Code is here
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "150px",
-                minWidth: "400px",
-                border: "1px solid",
-                borderRadius: "5px",
-                borderColor: "#E2E4E9",
+            <Button
+              variant="contained"
+              onClick={() => {
+                generateCode(structure.project_id);
               }}
+              sx={{ width: "fit-content", my: 2 }}
             >
-              <FolderZip
-                fontSize={"large"}
-                sx={{
-                  color: "rgba(0, 0, 0, 0.56)",
-                }}
-              />
-              <Typography variant="body2" fontWeight={600}>
-                Code.zip
-              </Typography>
-            </Box>
-            <Button variant="contained" sx={{ width: "fit-content", mt: 2 }}>
-              {"Download  "}
-              <FileDownloadIcon />
+              Proceed to generate code
             </Button>
           </Box>
-        )}
+        </Box>
+      ) : (
+        <Box
+          id="download-zip"
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" fontWeight={600}>
+            Your Generated Code is here
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "150px",
+              minWidth: "400px",
+              border: "1px solid",
+              borderRadius: "5px",
+              borderColor: "#E2E4E9",
+            }}
+          >
+            <FolderZip
+              fontSize={"large"}
+              sx={{
+                color: "rgba(0, 0, 0, 0.56)",
+              }}
+            />
+            <Typography variant="body2" fontWeight={600}>
+              Code.zip
+            </Typography>
+          </Box>
+          <Button variant="contained" sx={{ width: "fit-content", mt: 2 }}>
+            {"Download  "}
+            <FileDownloadIcon />
+          </Button>
+        </Box>
+      )}
     </>
   );
 };

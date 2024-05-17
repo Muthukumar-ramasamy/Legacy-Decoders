@@ -34,24 +34,24 @@ export const MagicDecoder: FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedFile) {
-    const legacy_code = new FormData();
-    legacy_code.append("legacy_code", selectedFile);
-    const payload = {
-      userName: "dbabu",
-      legacyTech: legacyTech ? legacyTech : null,
-      legacy_code: legacy_code,
-    };
-    setIsStory(true);
-    setLoading(true);
-    const res = (await generateStory(payload)) as any;
-    if (res?.data?.status !== 500) {  
-      setLoading(false);
-      setGenerateStoryResponse(res?.data);
-    } else {
-      setIsOpen(true);
-      setIsStory(false);
+      const legacy_code = new FormData();
+      legacy_code.append("legacy_code", selectedFile);
+      const payload = {
+        userName: "dbabu",
+        legacyTech: legacyTech ? legacyTech : null,
+        legacy_code: legacy_code,
+      };
+      setIsStory(true);
+      setLoading(true);
+      const res = (await generateStory(payload)) as any;
+      if (res?.data?.status !== 500) {
+        setLoading(false);
+        setGenerateStoryResponse(res?.data);
+      } else {
+        setIsOpen(true);
+        setIsStory(false);
+      }
     }
-}
   };
 
   return (
@@ -137,7 +137,7 @@ export const MagicDecoder: FC = () => {
                     justifySelf={"center"}
                     sx={{ mb: 2 }}
                   >
-                    {"(Comming soon)"}
+                    {"(Coming soon)"}
                   </Typography>
                 </Stack>
                 <TextField
@@ -233,7 +233,7 @@ export const MagicDecoder: FC = () => {
       )}
       <Snackbar
         open={isOpen}
-        onClose={()=>{
+        onClose={() => {
           setIsOpen(false);
         }}
         autoHideDuration={2000}

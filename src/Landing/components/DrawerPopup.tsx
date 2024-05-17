@@ -9,7 +9,7 @@ export const DrawerPopup = (props: any) => {
     <Drawer
       sx={{
         ">.MuiPaper-root": {
-          height: "85vh",
+          height: "50rem",
           p: 2,
           borderTopLeftRadius: "10px",
           borderTopRightRadius: "10px",
@@ -36,7 +36,7 @@ export const DrawerPopup = (props: any) => {
             alignItems: "center",
             width: "100%",
             marginBottom: "10px",
-            marginTop: "10px"
+            marginTop: "10px",
           }}
         >
           <Typography
@@ -55,14 +55,27 @@ export const DrawerPopup = (props: any) => {
             }}
           >
             {props?.isDownloadEnable && (
-              <Button variant="outlined" endIcon={(props?.url || props?.isLoading) ? <img src={downloadIcon} alt="download" /> : <img src={downloadDisableIcon} alt="download" />} sx={{
-                border: "solid 1px",
-                borderColor: "blue",
-                paddingx: "8px",
-                borderRadius: "10px",
-                color: "blue",
-                textTransform: "capitalize"
-              }} disabled={!props?.url || props?.isLoading}>Download</Button>
+              <Button
+                variant="outlined"
+                endIcon={
+                  props?.url && !props?.isLoading ? (
+                    <img src={downloadIcon} alt="download" />
+                  ) : (
+                    <img src={downloadDisableIcon} alt="download" />
+                  )
+                }
+                sx={{
+                  border: "solid 1px",
+                  borderColor: "blue",
+                  paddingx: "8px",
+                  borderRadius: "10px",
+                  color: "blue",
+                  textTransform: "capitalize",
+                }}
+                disabled={!props?.url || props?.isLoading}
+              >
+                Download
+              </Button>
             )}
             <Button
               sx={{
@@ -71,18 +84,32 @@ export const DrawerPopup = (props: any) => {
                 "&:hover": {
                   backgroundColor: "#f1f1f1",
                 },
-                marginLeft: "10px"
+                marginLeft: "10px",
               }}
               onClick={() => props?.close()}
               endIcon={<CloseIcon />}
               variant={"text"}
+              disabled={props?.isLoading || props?.isFileStreaming}
             >
               {"Close"}
             </Button>
           </Stack>
         </Box>
 
-        {props?.isLoading ? (<Stack sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}><Loader /></Stack>) : <Stack>{props.element}</Stack>}
+        {props?.isLoading ? (
+          <Stack
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <Loader />
+          </Stack>
+        ) : (
+          <Stack>{props.element}</Stack>
+        )}
       </Box>
     </Drawer>
   );

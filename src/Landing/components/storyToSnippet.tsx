@@ -4,24 +4,19 @@ import {
   Button,
   Card,
   CardContent,
-  Divider,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
   TextField,
   Typography,
-  useEventCallback,
 } from "@mui/material";
 import { Filebox } from "./Filebox";
 import storyToCode from "../service/codeGenerator";
 import FileProcessingCard from "./fileProgress";
 import { useNavigate } from "react-router-dom";
-import ProjectStructure from "./projectStructure";
 import { UploadPopUp } from "./UploadPopUp";
 import { DrawerPopup } from "./DrawerPopup";
-import Snippet from "./Snippet"
-import Loader from "./Loader";
+import Snippet from "./Snippet";
 
 export const StoryToSnippet: FC = () => {
   const navigate = useNavigate();
@@ -40,18 +35,27 @@ export const StoryToSnippet: FC = () => {
   const [fileUpload, setFileUpload] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [fileStatus, setFileStatus] = useState<any>();
-  const [status, setStatus] = useState<{ [key: string]: boolean[] }>();
+  const [projectZip, setProjectZip] = useState<any>();
+  const [isFileStreaming, setIsFileStreaming] = useState<boolean>(false);
 
   useEffect(() => {
     if (messages.length !== 0 && messages) {
-      setFileUpload(true);
-      setShowStructure(false);
+      if (messages !== undefined) {
+        setFileUpload(true);
+        setShowStructure(false);
+      }
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (projectZip !== undefined) {
+      setIsFileStreaming(false);
+    }
+  }, [projectZip]);
+
   const serverEvent = () => {
     setIsLoading(true);
+    setIsFileStreaming(true);
     const eventSource = new EventSource(
       "http://legacy-transformer-alb-287742165.us-east-1.elb.amazonaws.com/api/legacy/sse"
     );
@@ -124,10 +128,23 @@ export const StoryToSnippet: FC = () => {
   return (
     <>
       {fileUpload ? (
-        <UploadPopUp
-          serverEvents={messages}
-          setBack={() => setFileUpload(false)}
-        // fileStatus={fileStatus}
+        <DrawerPopup
+          close={() => {
+            setFileUpload(false);
+            setUserStory("");
+            setSelectedBrdFile(null);
+            setTechStack("");
+            setSelectedBrdVal("");
+          }}
+          element={
+            <UploadPopUp
+              serverEvents={messages}
+              setBack={() => setFileUpload(false)}
+              projectZip={projectZip}
+            />
+          }
+          isLoading={isLoading}
+          isFileStreaming={isFileStreaming}
         />
       ) : (
         <Box
@@ -317,12 +334,28 @@ export const StoryToSnippet: FC = () => {
         </Box>
       )}
       {showStructure && (
-        <DrawerPopup url={structure?.s3_url} isDownloadEnable={true} header={"Generated Project Structure"} close={() => { setShowStructure(false) }}
-         element={
-         <Snippet structure={structure} showStructure={showStructure}
-          setShowStructure={setShowStructure}
-          serverEvent={serverEvent} />
-        } isLoading={isLoading} />
+        <DrawerPopup
+          url={structure?.s3_url}
+          isDownloadEnable={true}
+          header={"Generated Project Structure"}
+          close={() => {
+            setShowStructure(false);
+            setUserStory("");
+            setSelectedBrdFile(null);
+            setTechStack("");
+            setSelectedBrdVal("");
+          }}
+          element={
+            <Snippet
+              structure={structure}
+              showStructure={showStructure}
+              setShowStructure={setShowStructure}
+              serverEvent={serverEvent}
+              setProjectZip={setProjectZip}
+            />
+          }
+          isLoading={isLoading}
+        />
       )}
     </>
   );

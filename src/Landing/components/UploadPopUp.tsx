@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Stack, Typography } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { UploadFileLoader } from "./UploadFileLoader";
+import downloadIcon from "../../assets/download_white.svg";
+import zipped from "../../assets/zip_file.svg";
 
 export const UploadPopUp = (props: any) => {
-  const { serverEvents } = props;
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  // const [cancel, setCancel] = useState<boolean>(false);
+  const { serverEvents, projectZip } = props;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  // const fileArray = Array.from(serverEvents.entries());
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -22,17 +19,21 @@ export const UploadPopUp = (props: any) => {
   }, []);
 
   const loadingData = [
-    { name: "Your experience is just a moment away..." },
-    {
-      name: "Sit tight while we prepare everything for you...",
-    },
-    {
-      name: "We're getting things ready for you. Sit tight!...",
-    },
-    {
-      name: "Just a quick sec... Your experience is worth the wait!...",
-    },
-    { name: "Making sure everything's perfect for you!..." },
+    { name: "Your experience is just a moment away" },
+    { name: "Sit tight while we prepare everything for you" },
+    { name: "We're getting things ready for you. Sit tight!" },
+    { name: "Just a quick sec... Your experience is worth the wait!" },
+    { name: "Making sure everything's perfect for you!" },
+    { name: "Hang tight, we're almost there" },
+    { name: "Putting the finishing touches on your experience" },
+    { name: "Preparing something special just for you" },
+    { name: "Almost done, thank you for your patience" },
+    { name: "Getting everything ready for you, just a moment" },
+    { name: "We're working hard to bring you the best experience" },
+    { name: "Your patience is appreciated, we're nearly there" },
+    { name: "Finalizing details for your amazing experience" },
+    { name: "Please hold on while we load your experience" },
+    { name: "We're nearly finished setting things up for you" },
   ];
 
   const getFileName = (file: string) => {
@@ -41,8 +42,6 @@ export const UploadPopUp = (props: any) => {
     const parts = filePath.split("/");
 
     return parts[parts.length - 1];
-
-    // return fileName.split(".")[0];
   };
 
   return (
@@ -51,52 +50,23 @@ export const UploadPopUp = (props: any) => {
         sx={{
           backgroundColor: "#fff",
           borderRadius: "10px",
-          border: "0.5px solid black",
-          padding: "10px",
-          width: "95%",
-          height: "29rem",
-          marginBottom: "10px",
-          marginTop: "10px",
-          marginLeft: "2.5%",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-          overflow: "hidden",
-          zIndex: "1000",
         }}
       >
         <Stack
           sx={{
-            height: "30%",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
           }}
         >
-          {/* <Stack sx={{ position: "absolute", top: "10px", left: "10px" }}>
-            <Typography
-              variant="body1"
-              sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                props?.setBack();
-              }}
-            >
-              <ArrowBackIcon fontSize="inherit" />
-              <Typography fontSize={14} sx={{ marginLeft: "2px" }}>
-                Go Back
-              </Typography>
-            </Typography>
-          </Stack> */}
-          <Stack sx={{ height: "40%" }}>
-            {isLoading ? (
+          <Stack>
+            {projectZip === undefined ? (
               <Stack>
                 <Typography
                   key={currentIndex}
                   fontSize={20}
-                  sx={{ color: "#3d5afe" }}
+                  sx={{ color: "#3d5afe", marginBottom: "20px" }}
                 >
                   {loadingData[currentIndex].name}
                 </Typography>
@@ -106,47 +76,46 @@ export const UploadPopUp = (props: any) => {
         </Stack>
         <Stack
           sx={{
-            overflowY: "auto",
-            height: "calc(100% - 132px)",
-            "&::-webkit-scrollbar": {
-              width: "4px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "darkgrey",
-              borderRadius: "2px",
-            },
-            "&::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: "grey",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "transparent",
-            },
             display: "flex",
-            flexDirection: "column",
-            overflow: "auto",
+            flexDirection: "row",
+            height: "44rem",
           }}
         >
-          <Stack
+          <Box
             sx={{
-              marginBottom: "2px",
-              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              width: "55%",
+              overflowY: "auto",
               padding: "0.5rem",
-              justifyContent: "center",
               alignItems: "center",
+              "&::-webkit-scrollbar": {
+                width: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "darkgrey",
+                borderRadius: "2px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "grey",
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "transparent",
+              },
+              maxHeight: "90%",
+              height: "100%",
             }}
           >
             {Object.entries(serverEvents)?.map(([filename, status], index) => (
               <Stack
-                key={index}
-                direction="row"
-                alignItems="center"
+                key={filename}
                 sx={{
                   marginBottom: "10px",
-                  width: "50%",
-                  border: "1px solid gray",
                   display: "flex",
+                  flexDirection: "row",
+                  borderBottom: "1px solid rgb(15, 118, 235, 0.5)",
                   justifyContent: "space-between",
-                  borderRadius: "5px",
+                  width: "75%",
                 }}
               >
                 <Typography
@@ -172,6 +141,86 @@ export const UploadPopUp = (props: any) => {
                 </Stack>
               </Stack>
             ))}
+          </Box>
+          <Stack
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              overflow: "auto",
+              width: "45%",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            {projectZip !== undefined && (
+              <Typography fontSize={20}>
+                {"Your Generated Code is here"}
+              </Typography>
+            )}
+            <UploadFileLoader
+              height={`${projectZip !== undefined ? "50px" : "100px"}`}
+              type={`${projectZip !== undefined ? "success" : "loader"}`}
+              width={`${projectZip !== undefined ? "50px" : "100px"}`}
+            />
+            {projectZip !== undefined && (
+              <>
+                <Box
+                  sx={{
+                    display: "inline-block",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                    border: "1px solid rgb(15, 118, 235, 0.5)",
+                    boxShadow: "0px 0px 5px rgba(15, 118, 235, 0.5)",
+                    padding: "20px !important",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <img src={zipped} alt="zip" />
+                  <Typography fontSize={16} sx={{}}>
+                    {getFileName(projectZip?.data?.s3_url)}
+                  </Typography>
+                </Box>
+                <Link
+                  href={projectZip?.data?.s3_url}
+                  sx={{
+                    textDecoration: "none",
+                    textUnderlineOffset: "none",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "fit",
+                      height: "fit",
+                      padding: "5px",
+                      paddingX: "10px",
+                      display: "flex",
+                      justifyItems: "center",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
+                    <Typography fontSize={12} textTransform={"capitalize"}>
+                      {"Download"}
+                    </Typography>
+                    <img
+                      src={downloadIcon}
+                      alt="download"
+                      style={{
+                        cursor: "pointer",
+                        color: "inherit",
+                        textUnderlineOffset: "none",
+                        height: "20px",
+                        marginTop: "2px",
+                      }}
+                    />
+                  </Button>
+                </Link>
+              </>
+            )}
           </Stack>
         </Stack>
       </Box>

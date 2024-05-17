@@ -9,12 +9,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import {
-  Route,
-  Routes,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { MagicDecoder } from "./components/magicDecoder";
 import { StoryToSnippet } from "./components/storyToSnippet";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -110,7 +105,7 @@ export const Home: FC = () => {
           position: "sticky",
           top: 0,
           zIndex: 10,
-          paddingTop: 2
+          paddingTop: 2,
         }}
       >
         <Box
@@ -256,7 +251,7 @@ export const Home: FC = () => {
                 }}
                 variant={"h6"}
               >
-                {"Generated User-stories"}
+                {"Generated Project Stories"}
               </Typography>
               <Button
                 sx={{

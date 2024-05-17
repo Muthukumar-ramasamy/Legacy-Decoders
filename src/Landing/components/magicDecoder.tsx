@@ -1,6 +1,7 @@
 import { FC, ChangeEvent, FormEvent, useState } from "react";
 import { Box } from "@mui/system";
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -9,6 +10,7 @@ import {
   Drawer,
   FormControl,
   OutlinedInput,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -16,7 +18,6 @@ import {
 import InputAdornment from "@mui/material/InputAdornment";
 import { Filebox } from "./Filebox";
 import AddLinkIcon from "@mui/icons-material/AddLink";
-import Loader from "./Loader";
 import GeneratedStory from "./GeneratedStory";
 import { generateStory } from "../service/generateStory";
 import FileProcessingCard from "./fileProgress";
@@ -25,10 +26,10 @@ export const MagicDecoder: FC = () => {
   const [description, setDescription] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isStory, setIsStory] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [generateStoryResponse, setGenerateStoryResponse] = useState<any>();
   const [legacyTech, setLegacyTech] = useState<any>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [generateStoryResponse, setGenerateStoryResponse] = useState<any>();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,18 +40,20 @@ export const MagicDecoder: FC = () => {
       legacyTech: legacyTech ? legacyTech : null,
       legacy_code: legacy_code,
     };
+    setIsStory(true);
     setLoading(true);
     const res = (await generateStory(payload)) as any;
-    if (res) {
+    if (res?.data?.status !== 500) {  
       setLoading(false);
       setGenerateStoryResponse(res?.data);
-      setIsStory(true);
+    } else {
+      setIsOpen(true);
+      setIsStory(false);
     }
   };
 
   return (
     <>
-      {loading ? <Loader /> : null}
       <Box
         sx={{
           display: "flex",
@@ -110,14 +113,31 @@ export const MagicDecoder: FC = () => {
                 my={3}
                 sx={{ display: "flex", flexDirection: "column" }}
               >
-                <Typography
-                  component={"div"}
-                  display={"flex"}
-                  justifySelf={"center"}
-                  sx={{ mb: 2 }}
+                <Stack
+                  direction="row"
+                  justifyContent=""
+                  spacing={1}
+                  sx={{
+                    mb: 1,
+                  }}
                 >
-                  {"Import from Github"}
-                </Typography>
+                  <Typography
+                    component={"div"}
+                    display={"flex"}
+                    justifySelf={"center"}
+                    sx={{ mb: 2 }}
+                  >
+                    {"Import from Github"}
+                  </Typography>
+                  <Typography
+                    component={"div"}
+                    display={"flex"}
+                    justifySelf={"center"}
+                    sx={{ mb: 2 }}
+                  >
+                    {"(Comming soon)"}
+                  </Typography>
+                </Stack>
                 <TextField
                   inputProps={{
                     startadornment: (
@@ -139,7 +159,14 @@ export const MagicDecoder: FC = () => {
                 my={3}
                 sx={{ display: "flex", flexDirection: "column" }}
               >
-                <Stack direction="row" justifyContent="" spacing={1}>
+                <Stack
+                  direction="row"
+                  justifyContent=""
+                  spacing={1}
+                  sx={{
+                    mb: 1,
+                  }}
+                >
                   <Typography
                     component={"div"}
                     display={"flex"}
@@ -173,7 +200,14 @@ export const MagicDecoder: FC = () => {
                   onChange={(e) => setLegacyTech(e.target.value)}
                 />
               </Box>
-              <Button type="submit" variant="contained" fullWidth>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  width: "fit-content",
+                }}
+              >
                 Generate User Story
               </Button>
             </form>
@@ -181,10 +215,11 @@ export const MagicDecoder: FC = () => {
         </Card>
         <div></div>
       </Box>
-      {isStory && !loading && (
+      {isStory && (
         <>
           <GeneratedStory
             generateStoryResponse={generateStoryResponse}
+            loading={loading}
             onClose={() => {
               setIsStory(false);
               setDescription("");
@@ -194,6 +229,18 @@ export const MagicDecoder: FC = () => {
           />
         </>
       )}
+      <Snackbar
+        open={isOpen}
+        onClose={()=>{
+          setIsOpen(false);
+        }}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert severity="error" variant="filled" sx={{ width: "100%" }}>
+          Please retry..
+        </Alert>
+      </Snackbar>
     </>
   );
 };

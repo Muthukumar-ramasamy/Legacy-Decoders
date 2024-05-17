@@ -3,8 +3,6 @@ import {
   Typography,
   Button,
   Drawer,
-  CardContent,
-  Card,
   IconButton,
   ToggleButton,
   ToggleButtonGroup,
@@ -14,7 +12,6 @@ import { FC, useEffect, useState } from "react";
 import {
   Route,
   Routes,
-  Link,
   useNavigate,
   useLocation,
 } from "react-router-dom";
@@ -22,31 +19,11 @@ import { MagicDecoder } from "./components/magicDecoder";
 import { StoryToSnippet } from "./components/storyToSnippet";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CloseIcon from "@mui/icons-material/Close";
-import HistoryList from "./history/HistoryList";
 import welcome from "../assets/Welcome.png";
 import logo from "../assets/Vector.png";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { UploadPopUp } from "./components/UploadPopUp";
 import { GenerateProject } from "./components/project";
 
-const historyValues = [
-  {
-    title: "User Story 4",
-    date: "04/05/2024",
-  },
-  {
-    title: "User Story 3",
-    date: "04/02/2024",
-  },
-  {
-    title: "User Story 2",
-    date: "06/01/2024",
-  },
-  {
-    title: "User Story 1",
-    date: "01/01/2024",
-  },
-];
 export const Home: FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const navigate = useNavigate();
@@ -131,7 +108,9 @@ export const Home: FC = () => {
           backgroundImage: `url(${welcome})`,
           backgroundSize: "cover",
           position: "sticky",
+          top: 0,
           zIndex: 10,
+          paddingTop: 2
         }}
       >
         <Box
@@ -199,6 +178,7 @@ export const Home: FC = () => {
                   fontWeight: 500,
                   textTransform: "unset",
                 }}
+                size={"small"}
               >
                 Story to Code
               </ToggleButton>
@@ -308,7 +288,7 @@ export const Home: FC = () => {
         </Drawer>
         <Button
           sx={{
-            width: "25rem",
+            // width: "fit-content",
             height: "3rem",
             borderRadius: "20px",
             backgroundColor: "white",

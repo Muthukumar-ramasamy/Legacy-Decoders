@@ -12,11 +12,9 @@ const GeneratedStory = (props: any) => {
         close={() => {
           props.onClose();
         }}
+        isLoading={props.loading}
         element={
           <>
-            {props.loading ? (
-              <Loader />
-            ) : (
               <Grid container spacing={2} sx={{ p: 2 }}>
                 <Grid item xs={12} sm={6}>
                   <Box
@@ -182,7 +180,6 @@ const GeneratedStory = (props: any) => {
                   </Box>
                 </Grid>
               </Grid>
-            )}
           </>
         }
       ></DrawerPopup>

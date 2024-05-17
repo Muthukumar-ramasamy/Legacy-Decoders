@@ -33,6 +33,7 @@ export const MagicDecoder: FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (selectedFile) {
     const legacy_code = new FormData();
     legacy_code.append("legacy_code", selectedFile);
     const payload = {
@@ -50,6 +51,7 @@ export const MagicDecoder: FC = () => {
       setIsOpen(true);
       setIsStory(false);
     }
+}
   };
 
   return (

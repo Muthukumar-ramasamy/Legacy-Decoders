@@ -1,11 +1,10 @@
 import { Box, Typography, Button, Drawer, Stack } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { downloadFile } from "../util/commonUtil";
+import downloadDisableIcon from "../../assets/download_disable.svg";
 import downloadIcon from "../../assets/download.svg";
-import { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import Loader from "./Loader";
 
 export const DrawerPopup = (props: any) => {
-  const [toast, setToast] = useState<any>();  
   return (
     <Drawer
       sx={{
@@ -37,6 +36,7 @@ export const DrawerPopup = (props: any) => {
             alignItems: "center",
             width: "100%",
             marginBottom: "10px",
+            marginTop: "10px"
           }}
         >
           <Typography
@@ -55,32 +55,14 @@ export const DrawerPopup = (props: any) => {
             }}
           >
             {props?.isDownloadEnable && (
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  mr: 2,
-                  backgroundColor: "white",
-                  border: "solid 1px",
-                  borderColor: "blue",
-                  padding: "8px",
-                  borderRadius: "10px",
-                }}
-                onClick={() => downloadFile(props?.url)}
-              >
-                <Typography
-                  sx={{ color: "blue", textSize: "3px", marginRight: "5px" }}
-                  component="div"
-                >
-                  Download
-                </Typography>
-                <Stack sx={{}}>
-                  <img src={downloadIcon} alt="download" />
-                </Stack>
-              </Stack>
+              <Button variant="outlined" endIcon={(props?.url || props?.isLoading) ? <img src={downloadIcon} alt="download" /> : <img src={downloadDisableIcon} alt="download" />} sx={{
+                border: "solid 1px",
+                borderColor: "blue",
+                paddingx: "8px",
+                borderRadius: "10px",
+                color: "blue",
+                textTransform: "capitalize"
+              }} disabled={!props?.url || props?.isLoading}>Download</Button>
             )}
             <Button
               sx={{
@@ -89,6 +71,7 @@ export const DrawerPopup = (props: any) => {
                 "&:hover": {
                   backgroundColor: "#f1f1f1",
                 },
+                marginLeft: "10px"
               }}
               onClick={() => props?.close()}
               endIcon={<CloseIcon />}
@@ -98,7 +81,8 @@ export const DrawerPopup = (props: any) => {
             </Button>
           </Stack>
         </Box>
-        <Stack>{props.element}</Stack>
+
+        {props?.isLoading ? (<Stack sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}><Loader /></Stack>) : <Stack>{props.element}</Stack>}
       </Box>
     </Drawer>
   );

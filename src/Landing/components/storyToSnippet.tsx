@@ -19,6 +19,9 @@ import FileProcessingCard from "./fileProgress";
 import { useNavigate } from "react-router-dom";
 import ProjectStructure from "./projectStructure";
 import { UploadPopUp } from "./UploadPopUp";
+import { DrawerPopup } from "./DrawerPopup";
+import Snippet from "./Snippet"
+import Loader from "./Loader";
 
 export const StoryToSnippet: FC = () => {
   const navigate = useNavigate();
@@ -36,6 +39,7 @@ export const StoryToSnippet: FC = () => {
   const [showStructure, setShowStructure] = useState(false);
   const [fileUpload, setFileUpload] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fileStatus, setFileStatus] = useState<any>();
   const [status, setStatus] = useState<{ [key: string]: boolean[] }>();
 
@@ -47,11 +51,13 @@ export const StoryToSnippet: FC = () => {
   }, [messages]);
 
   const serverEvent = () => {
+    setIsLoading(true);
     const eventSource = new EventSource(
-      "http://192.168.22.207:8080/api/legacy/sse"
+      "http://legacy-transformer-alb-287742165.us-east-1.elb.amazonaws.com/api/legacy/sse"
     );
     eventSource.addEventListener("files", (event: any) => {
       const newMessage = JSON.parse(event.data);
+      setIsLoading(false);
       setMessages(newMessage);
     });
 
@@ -79,10 +85,13 @@ export const StoryToSnippet: FC = () => {
 
   const generateStructure = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setShowStructure(true);
     if (projectId) {
       const res = (await storyToCode.getStructureByProjectId(projectId)) as any;
       if (res) {
         setShowStructure(true);
+        setIsLoading(false);
         setStructure({
           content: res.content,
           s3_url: res?.s3_url,
@@ -99,9 +108,8 @@ export const StoryToSnippet: FC = () => {
         brdFile: brd_file,
       };
       const res = (await storyToCode.generateProjectStructure(payload)) as any;
-      setShowStructure(true);
       if (res) {
-        setShowStructure(true);
+        setIsLoading(false);
         setStructure({
           content: res?.data?.content,
           s3_url: res?.data?.s3_url,
@@ -109,6 +117,7 @@ export const StoryToSnippet: FC = () => {
         });
       }
     } else {
+      setIsLoading(false);
     }
   };
 
@@ -118,7 +127,7 @@ export const StoryToSnippet: FC = () => {
         <UploadPopUp
           serverEvents={messages}
           setBack={() => setFileUpload(false)}
-          // fileStatus={fileStatus}
+        // fileStatus={fileStatus}
         />
       ) : (
         <Box
@@ -307,14 +316,14 @@ export const StoryToSnippet: FC = () => {
           </Card>
         </Box>
       )}
-      {
-        <ProjectStructure
-          structure={structure}
-          showStructure={showStructure}
+      {showStructure && (
+        <DrawerPopup url={structure?.s3_url} isDownloadEnable={true} header={"Generated Project Structure"} close={() => { setShowStructure(false) }}
+         element={
+         <Snippet structure={structure} showStructure={showStructure}
           setShowStructure={setShowStructure}
-          serverEvent={serverEvent}
-        />
-      }
+          serverEvent={serverEvent} />
+        } isLoading={isLoading} />
+      )}
     </>
   );
 };

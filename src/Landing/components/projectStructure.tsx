@@ -43,7 +43,6 @@ const ProjectStructure: FC<{
   };
 
   const generateCode = async (projectId: number) => {
-    console.log("generateCode", projectId);
     serverEvent();
     const projectZip = await storyToCode.getProjectZip(projectId);
     if (projectZip) {
@@ -256,4 +255,3 @@ const ProjectStructure: FC<{
 };
 
 export default ProjectStructure;
-

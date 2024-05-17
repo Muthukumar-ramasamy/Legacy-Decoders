@@ -6,7 +6,8 @@ export const Filebox: FC<{
   onChange: (file: File) => void;
   isFormSubmitted: boolean;
   isStoryToSyntex?: Boolean;
-}> = ({ onChange, isStoryToSyntex }) => {
+  accept: string;
+}> = ({ onChange, isStoryToSyntex, accept }) => {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [invalidFile, setInvalidFile] = useState<boolean>(false);
@@ -48,7 +49,6 @@ export const Filebox: FC<{
       for (let limit = 0; limit < files.length; limit++) {
         const file = files[limit];
         let fileExtension = file.type.split("/")[1];
-        console.log("fileee", fileExtension);
         if (!fileExtension) {
           const splitName = file.name.split(".");
           fileExtension = splitName[splitName.length - 1];
@@ -90,10 +90,6 @@ export const Filebox: FC<{
   const handleChange = function (e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (files && files[0]) {
-      console.log(files, "filee");
-      // // handleFile(files);
-      // e.target.value = null;
-      // inputRef.current.value = null;
       setSelectedFile(files);
       onChange(files[0]);
     }
@@ -143,7 +139,7 @@ export const Filebox: FC<{
         hidden
         multiple={false}
         ref={inputRef}
-        accept={"application/zip"}
+        accept={accept}
         type="file"
         onChange={handleChange}
       />
@@ -157,31 +153,34 @@ export const Filebox: FC<{
             justifyContent: "center",
             alignItems: "center",
             gap: 1,
+            p: 1,
           },
         ]}
       >
-        {!isStoryToSyntex && (
-          <CloudUploadOutlinedIcon
-            fontSize={"small"}
-            color={isError ? "error" : "primary"}
-            sx={{ width: "24px", height: "24px", margin: 2 }}
-          />
-        )}
+        <CloudUploadOutlinedIcon
+          fontSize={"small"}
+          color={isError ? "error" : "primary"}
+          sx={{ width: "24px", height: "24px", mt: 4 }}
+        />
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 1,
           }}
         >
           <Box component={"div"}>
             <Typography>{"Choose a file or drag & drop it here."}</Typography>
-            <Typography>{"Upload Zip file up to 10 MB."}</Typography>
+            {!isStoryToSyntex && (
+              <Typography>{`Upload zip file up to 10 MB.`}</Typography>
+            )}
+            {isStoryToSyntex && (
+              <Typography>{`Upload txt file up to 5 MB.`}</Typography>
+            )}
             <Button
               onClick={(e) => onButtonClick(e)}
               variant={"outlined"}
               sx={{
-                mt: 2,
+                my: 2,
                 textDecorationColor: "rgb(33, 94, 205, .4)",
                 textTransform: "none",
                 fontSize: "16px",
@@ -194,9 +193,14 @@ export const Filebox: FC<{
             </Button>
           </Box>
           <Box sx={{ width: "100%", textAlign: "center", height: "20px" }}>
-            {isError && invalidFile && (
+            {isError && invalidFile && !isStoryToSyntex && (
               <Typography variant={"body2"} color={"error.main"}>
                 {"Please upload a valid zip file"}
+              </Typography>
+            )}
+            {isError && invalidFile && isStoryToSyntex && (
+              <Typography variant={"body2"} color={"error.main"}>
+                {"Please upload a valid txt file"}
               </Typography>
             )}
           </Box>

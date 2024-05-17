@@ -32,8 +32,6 @@ export const MagicDecoder: FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("sadsad", selectedFile);
-
     const legacy_code = new FormData();
     legacy_code.append("legacy_code", selectedFile);
     const payload = {
@@ -78,6 +76,7 @@ export const MagicDecoder: FC = () => {
                   onRemove={() => {
                     setSelectedFile(null);
                   }}
+                  fileType="zip"
                 />
               ) : (
                 <Filebox
@@ -85,6 +84,7 @@ export const MagicDecoder: FC = () => {
                     setSelectedFile(file);
                   }}
                   isFormSubmitted={false}
+                  accept={"application/zip"}
                 />
               )}
 

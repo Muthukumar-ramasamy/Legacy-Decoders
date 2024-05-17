@@ -1,14 +1,12 @@
 import { axiosInstance } from "../../common/http";
 
-const BASE_URL = "http://192.168.22.207:8080/api/legacy/";
-
 export const generateStory = async (payload: {
   userName: string;
   legacyTech: string;
   legacy_code: any;
 }) => {
   const token = localStorage.getItem("token");
-  const url = `generate-story-brd?username=${payload.userName}&legacyTech=${payload.legacyTech}`;
+  const url = `/generate-story-brd?username=${payload.userName}&legacyTech=${payload.legacyTech}`;
   const config = {
     headers: {
       "content-type": "multipart/form-data",
@@ -18,7 +16,7 @@ export const generateStory = async (payload: {
   };
   try {
     const response = await axiosInstance.post(
-      `${BASE_URL}${url}`,
+      `${url}`,
       payload.legacy_code,
       config
     );

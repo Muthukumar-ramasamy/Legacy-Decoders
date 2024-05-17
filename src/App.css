@@ -1,6 +1,4 @@
 body {
-  text-align: center;
-
   /* width */
   ::-webkit-scrollbar {
     width: 8px;

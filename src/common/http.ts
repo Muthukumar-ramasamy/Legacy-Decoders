@@ -14,7 +14,7 @@ export const getAuthToken = () => {
 };
 
 export const axiosInstance = axios.create({
-  baseURL: "http://192.168.22.207:8080/api/legacy/",
+  baseURL: "http://localhost:8080/api/legacy/",
   headers: headers,
 });
 

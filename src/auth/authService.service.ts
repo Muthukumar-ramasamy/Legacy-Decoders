@@ -6,7 +6,6 @@ export const registerUser = async (payload) => {
   try {
     const response = await axiosInstance.post(url, payload);
     if (response?.status === 200) {
-      console.log(response);
       return response;
     } else {
       throw response;
@@ -21,7 +20,6 @@ export const loginUser = async (payload) => {
   try {
     const response = await axiosInstance.post(url, payload);
     if (response?.status === 200) {
-      console.log(response);
       return response;
     } else {
       throw response;
@@ -43,4 +41,3 @@ export const getUser = async () => {
     throw error.response.data;
   }
 };
-

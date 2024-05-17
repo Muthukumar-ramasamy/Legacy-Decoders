@@ -37,7 +37,6 @@ export const UploadPopUp = (props: any) => {
 
   const getFileName = (file: string) => {
     const filePath = file;
-    console.log("filePath", filePath);
 
     const parts = filePath.split("/");
 

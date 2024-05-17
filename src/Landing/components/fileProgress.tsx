@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import { Error, Image, FolderZip } from "@mui/icons-material";
 import zip from "../../assets/zip_file.svg";
+import txt from "../../assets/txt.svg";
 import deleteIcon from "../../assets/delete.svg";
 
 import {
@@ -19,6 +20,7 @@ export interface FileProcessingProps {
   progressstatus: "loading" | "complete" | "failed";
   onRemove: (data?: any) => void;
   filleErrorMessage?: string | null;
+  fileType: string;
 }
 
 const FileProcessingCard: FC<FileProcessingProps> = ({
@@ -27,6 +29,7 @@ const FileProcessingCard: FC<FileProcessingProps> = ({
   progressstatus,
   onRemove,
   filleErrorMessage,
+  fileType,
 }) => {
   const fileStatus = {
     complete: "Complete",
@@ -56,7 +59,11 @@ const FileProcessingCard: FC<FileProcessingProps> = ({
   );
   const statusBasedIcon = useMemo(() => {
     if (progressstatus === "complete") {
-      return <img src={zip} alt="" />;
+      if (fileType === "zip") {
+        return <img src={zip} alt="" />;
+      } else {
+        return <img src={txt} alt="" />;
+      }
     }
     if (progressstatus === "failed") {
       return (

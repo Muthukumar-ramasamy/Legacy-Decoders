@@ -109,7 +109,6 @@ export const StoryToSnippet: FC = () => {
         });
       }
     } else {
-      console.log("Please upload a zip file.");
     }
   };
 
@@ -194,7 +193,7 @@ export const StoryToSnippet: FC = () => {
                       value="0"
                       control={<Radio />}
                       label="BRD Available&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes"
-                      style={{ margin: "0px" }}
+                      style={{ margin: "0px", paddingLeft: 10 }}
                       labelPlacement="start"
                     />
                     <FormControlLabel
@@ -223,6 +222,7 @@ export const StoryToSnippet: FC = () => {
                         onRemove={() => {
                           setSelectedBrdFile(null);
                         }}
+                        fileType="txt"
                       />
                     ) : (
                       <>
@@ -230,8 +230,9 @@ export const StoryToSnippet: FC = () => {
                           component={"div"}
                           display={"flex"}
                           justifySelf={"center"}
+                          paddingLeft={"10px"}
                         >
-                          {"Upload BRD file as '.txt' file"}
+                          {"Upload BRD file(.txt)"}
                         </Typography>
                         <Filebox
                           isStoryToSyntex={true}
@@ -239,6 +240,7 @@ export const StoryToSnippet: FC = () => {
                             setSelectedBrdFile(file);
                           }}
                           isFormSubmitted={false}
+                          accept={"text/plain"}
                         />
                       </>
                     )}
@@ -265,16 +267,37 @@ export const StoryToSnippet: FC = () => {
                 {selectedBrdVal === "1" ? (
                   <Button
                     variant="outlined"
-                    sx={{ width: "fit-content", mb: 2 }}
+                    sx={{
+                      width: "fit-content",
+                      textTransform: "unset",
+                      mt: 5,
+                    }}
                     onClick={() => generateBrdContent()}
                   >
                     Generate BRD
+                  </Button>
+                ) : selectedBrdVal === "0" ? (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={!projectId && !selectedBrdFile}
+                    sx={{
+                      width: "fit-content",
+                      textTransform: "unset",
+                    }}
+                  >
+                    Generate Project Structure
                   </Button>
                 ) : (
                   <Button
                     type="submit"
                     variant="contained"
                     disabled={!projectId && !selectedBrdFile}
+                    sx={{
+                      width: "fit-content",
+                      textTransform: "unset",
+                      mt: 5,
+                    }}
                   >
                     Generate Project Structure
                   </Button>
@@ -297,4 +320,3 @@ export const StoryToSnippet: FC = () => {
 };
 
 export default StoryToSnippet;
-
